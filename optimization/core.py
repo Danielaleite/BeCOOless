@@ -31,7 +31,17 @@ def compute_cost(amounts, factors):
 def minimize(objective, constraints):
     """Solves a Knapsack problem. Modifies variables of the objective function."""
     problem = cp.Problem(cp.Minimize(objective), constraints)
-    problem.solve(solver="ECOS_BB")
+
+    solver_options = {
+        "max_iters": 1000,  # default: 100
+        # "abstol": 1e-7,  # default: 1e-8
+        # "reltol": 1e-7,  # default: 1e-8
+        # "feastol": 1e-7,  # default: 1e-8
+        # "abstol_inacc": 5e-4,  # default: 5e-5
+        # "reltol_inacc": 5e-4,  # default: 5e-5
+        # "feastol_inacc": 1e-3,  # default: 1e-4
+    }
+    problem.solve(solver="ECOS_BB", **solver_options)
 
     return problem.value
 
