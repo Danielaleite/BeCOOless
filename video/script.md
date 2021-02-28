@@ -5,6 +5,7 @@ Climate change is a problem that will impact every of the 75 billion tonnes of l
 Such a huge problem can only be solved by many small actions and not by a singular massive action. Just like the flap of
 a butterfly's wings, thee small choices wee take on a daily basis can gain incredible power and shape the world.
 
+<<<<<<< HEAD
 One of the largest issue in climate change is the steady rise in temperature caused due to greenhouse gases. According
 to the Environmental Protection Agency (EPA), CO2 is responsible for 81% of all green emissions in 2018. The math is
 simple: Fewer carbon dioxide released into the atmosphere means less global warming. Data suggests that
@@ -28,14 +29,45 @@ concerned about climate change, only 48% of people think abut the carbon emissio
 Additionally, going green is often associated with great sacrifice or a Bourgeoisie lifestyle.
 This is not true! Going green is affordable, it's a matter of making minor changes to what we buy which makes a huge difference!
 
+=======
+This famous phenomenon, known as the butterfly effect, may be essential for
+ tackling climate change, which undoubtedly will be one of the hardest
+ challenges we and future generations will be facing: It is about taking action;
+ even the smallest steps can help; and it is our goal to make it easy for
+ everyone to start 'walking'.
+
+(Introduction)
+
+Hi, we are the BeCOOL team, a group of students from Europe whose members have
+grown up on three different continents and societies that could hardly be more
+different. Hence, we understand that taking action against climate change is a
+highly individual and challenging task for individuals. We intend to enable
+anyone to fight climate change, one small action at a time.
+
+(Data - problem)
+
+Going green is often associated with great sacrifice or a Bourgeoisie lifestyle.
+Human emissions of carbon dioxide and other greenhouse gases – are a primary
+driver of climate change. The math is simple: Fewer carbon dioxide released into
+the atmosphere means less global warming. Our daily lives heavily influence this
+emission.
+
+Take shopping as an example. We all do it, but who has the dedication, and time,
+to set up a shopping list which combines all our goals of a healthy,
+environmentally friendly, yet affordable diet. In a small poll, we found that 9
+out of 10 participants would like to buy greener products at a small additional
+cost. roughly every second participant would even be willing to spend 5% or more
+in the supermarket for greener products.
+>>>>>>> 43df87fbb75e565e074ad95539c70adb35d09bdd
 
 (Storytelling)
 
-Now meet Mike. Mike is a young individual living independently. Mike likes to
-live sustainably while living on a budget. Confused with the plethora of options
-available, Mike currently buys solely based on the costs. Here comes BeCOOL. A
-user-friendly app that allows Mike to choose greener alternatives while
-respecting his budget.
+Now meet Mike. He is a young individual who seeks to live sustainably while
+staying on a budget. Mike is overwhelmed by the plethora of available options at
+the supermarket. How should he choose? Sometimes, he simply buys the cheapest
+option, but he would not mind paying a bit more if he knew the product was much
+greener. This is where BeCOOL, the app we've developed, comes in. BeCOOL helps
+Mike to choose greener alternatives while respecting his budget.
 
 (Platform presentation)
 
@@ -46,6 +78,7 @@ by just choosing greener alternatives of some products can lead to a huge saving
 the app enables you to chose how you spend an extra dollar to make the most impactful decision.
 
 (Business plan)
+<<<<<<< HEAD
 BeCOOL supports local business! By partnering up with chain and local supermarkets, we are able to obtain the most accurate
 data for the carbon emission of each product. Additionally, we'll helpl supermarkets understand you better to serve for your
 greener tastes. Premium users will also be able to further customize the algorithm selection by indicating their importance
@@ -54,3 +87,15 @@ and lock specific items to be considered.
 (Conclusion)
 
 So let's all Be COOL!
+=======
+
+The basic app is free to use, but you can unlock even more powerful options to
+design a shopping list that fits your lifestyle choices for a small monthly fee,
+and get rid of the ads, too.
+
+(Conclusion)
+
+Every step counts. We can all contribute. It's the joint effort that matters.
+
+What are you waiting for? Try out the app and BeCOOL at your local store.
+>>>>>>> 43df87fbb75e565e074ad95539c70adb35d09bdd
