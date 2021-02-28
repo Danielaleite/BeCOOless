@@ -19,8 +19,6 @@ export class AppComponent implements AfterViewInit {
 
   constructor(public router: Router) {
 
-    if(Globals.supermarket == null && Globals.shoppingList.length == 0)
-      router.navigateByUrl('location')
   }
 
   ngAfterViewInit() {
