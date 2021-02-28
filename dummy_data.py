@@ -102,6 +102,11 @@ def extract_optimization_input(categories, pool):
     return product_ids, units, prices, CO2_emissions
 
 
+def constrain_elements_non_negative(variables):
+    """Constrain each variable to  be ``>=0``. Return list of constraints."""
+    return [var >= 0 for var in variables]
+
+
 def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emissions):
     num_variables = sum(len(products) for products in product_ids)
 
@@ -110,9 +115,7 @@ def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emission
     # constraints
     constraints = []
 
-    # non-positive product counts
-    for entry in amounts:
-        constraints.append(entry >= 0)
+    constraints += constrain_elements_non_negative(amounts)
 
     units_flat = np.array(sum(units, []))
 
@@ -170,8 +173,7 @@ def solve_optimal_CO2(
     constraints = []
 
     # non-positive product counts
-    for entry in amounts:
-        constraints.append(entry >= 0)
+    constraints += constrain_elements_non_negative(amounts)
 
     units_flat = np.array(sum(units, []))
 
