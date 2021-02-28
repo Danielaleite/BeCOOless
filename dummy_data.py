@@ -83,21 +83,21 @@ def extract_optimization_input(categories, pool):
 
     for category in categories:
         category_product_ids = []
-        category_units = []
         category_prices = []
         category_CO2_emissions = []
 
         category_space = pool[category]
         for product_id, product_info in category_space.items():
             category_product_ids.append(product_id)
-            category_units.append(product_info["unit"])
+            units.append(product_info["unit"])
             category_prices.append(product_info["price"])
             category_CO2_emissions.append(product_info["CO2"])
 
         product_ids.append(category_product_ids)
-        units.append(category_units)
         prices.append(category_prices)
         CO2_emissions.append(category_CO2_emissions)
+
+    units = np.array(units)
 
     return product_ids, units, prices, CO2_emissions
 
@@ -145,13 +145,11 @@ def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emission
     # non-negative amounts
     constraints += constrain_elements_non_negative(amounts)
 
-    units_flat = np.array(sum(units, []))
-
     # must fulfill shopping list
     category_count = [len(products) for products in product_ids]
 
     constraints += constrain_match_shopping_list(
-        category_count, target_amounts, amounts, units_flat
+        category_count, target_amounts, amounts, units
     )
 
     # set up objective
@@ -201,13 +199,11 @@ def solve_optimal_CO2(
     # non-negative amounts
     constraints += constrain_elements_non_negative(amounts)
 
-    units_flat = np.array(sum(units, []))
-
     # must fulfill shopping list
     category_count = [len(products) for products in product_ids]
 
     constraints += constrain_match_shopping_list(
-        category_count, target_amounts, amounts, units_flat
+        category_count, target_amounts, amounts, units
     )
 
     # must be lower than threshold-ed cost
