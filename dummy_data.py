@@ -83,20 +83,19 @@ def extract_optimization_input(categories, pool):
 
     for category in categories:
         category_product_ids = []
-        category_CO2_emissions = []
 
         category_space = pool[category]
         for product_id, product_info in category_space.items():
             category_product_ids.append(product_id)
             units.append(product_info["unit"])
             prices.append(product_info["price"])
-            category_CO2_emissions.append(product_info["CO2"])
+            CO2_emissions.append(product_info["CO2"])
 
         product_ids.append(category_product_ids)
-        CO2_emissions.append(category_CO2_emissions)
 
     units = np.array(units)
     prices = np.array(prices)
+    CO2_emissions = np.array(CO2_emissions)
 
     return product_ids, units, prices, CO2_emissions
 
@@ -159,8 +158,7 @@ def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emission
     solution_amounts = np.round(amounts.value).astype(np.int32)
 
     # evaluate CO2 cost
-    CO2_emissions_flat = np.array(sum(CO2_emissions, []))
-    solution_CO2_emissions = compute_cost(solution_amounts, CO2_emissions_flat)
+    solution_CO2_emissions = compute_cost(solution_amounts, CO2_emissions)
 
     solution_transformed = []
     start = 0
@@ -209,8 +207,7 @@ def solve_optimal_CO2(
     constraints.append(cost_price <= (1 + user_threshold) * cost_cheapest)
 
     # set up objective
-    CO2_emissions_flat = np.array(sum(CO2_emissions, []))
-    cost_CO2_emissions = compute_cost(amounts, CO2_emissions_flat)
+    cost_CO2_emissions = compute_cost(amounts, CO2_emissions)
 
     solution_CO2_emissions = minimize(cost_CO2_emissions, constraints)
     solution_amounts = np.round(amounts.value).astype(np.int32)
@@ -220,7 +217,7 @@ def solve_optimal_CO2(
     solution_transformed = []
     start = 0
 
-    for category_idx, products in enumerate(product_ids):
+    for products in product_ids:
         num_products = len(products)
         solution_transformed.append(
             solution_amounts[start : start + num_products].tolist()
