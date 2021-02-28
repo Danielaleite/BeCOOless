@@ -20,4 +20,4 @@ jobs:
         python -m pip install -r requirements.txt
     - name: Check core functionality
       run: |
-        python core.py
+        cd optimization && python core.py
