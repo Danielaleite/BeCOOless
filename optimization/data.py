@@ -1,0 +1,136 @@
+"""Larger toy data set for demo."""
+
+offer = {
+    "beef": {
+        "category": "beef",
+        "unit": 1,
+        "price": 2.99,
+        "co2": 29,
+    },
+    "beef south america": {
+        "category": "beef",
+        "unit": 1,
+        "price": 3.99,
+        "co2": 41,
+    },
+    "pork": {
+        "category": "pork",
+        "unit": 1,
+        "price": 3.99,
+        "co2": 6,
+    },
+    "pork imported": {
+        "category": "pork",
+        "unit": 1,
+        "price": 3.70,
+        "co2": 6.5,
+    },
+    "bio chicken": {
+        "category": "chicken",
+        "unit": 1,
+        "price": 3.99,
+        "co2": 2.8,
+    },
+    "chicken": {
+        "category": "chicken",
+        "unit": 1,
+        "price": 2.99,
+        "co2": 3.7,
+    },
+    "eggs": {
+        "category": "eggs",
+        "unit": 1,
+        "price": 1.49,
+        "co2": 2.0,
+    },
+    "bio eggs": {
+        "category": "eggs",
+        "unit": 1,
+        "price": 2.19,
+        "co2": 1.5,
+    },
+    "carrot": {
+        "category": "carrot",
+        "unit": 1,
+        "price": 0.99,
+        "co2": 0.10,
+    },
+    "carrot": {
+        "category": "carrot",
+        "unit": 1,
+        "price": 1.49,
+        "co2": 0.08,
+    },
+    "lettuce": {
+        "category": "lettuce",
+        "unit": 1,
+        "price": 0.99,
+        "co2": 1.05,
+    },
+    "bio lettuce": {
+        "category": "lettuce",
+        "unit": 1,
+        "price": 1.79,
+        "co2": 0.26,
+    },
+    "open field lettuce": {
+        "category": "lettuce",
+        "unit": 1,
+        "price": 1.99,
+        "co2": 0.14,
+    },
+    "melon": {
+        "category": "melon",
+        "unit": 1,
+        "price": 2.99,
+        "co2": 1.0,
+    },
+    "bio melon": {
+        "category": "melon",
+        "unit": 1,
+        "price": 3.99,
+        "co2": 0.3,
+    },
+    "oranges": {
+        "category": "oranges",
+        "unit": 1,
+        "price": 1.99,
+        "co2": 0.35,
+    },
+    "bio oranges": {
+        "category": "oranges",
+        "unit": 1,
+        "price": 2.49,
+        "co2": 0.25,
+    },
+    "pepper": {
+        "category": "pepper",
+        "unit": 1,
+        "price": 0.99,
+        "co2": 3.5,
+    },
+    "pepper": {
+        "category": "pepper",
+        "unit": 1,
+        "price": 1.99,
+        "co2": 0.48,
+    },
+    "potatoes": {
+        "category": "potatoes",
+        "unit": 1,
+        "price": 1.49,
+        "co2": 0.35,
+    },
+    "bio potatoes": {
+        "category": "potatoes",
+        "unit": 1,
+        "price": 1.99,
+        "co2": 0.18,
+    },
+    "local potatoes": {
+        "category": "potatoes",
+        "unit": 1,
+        "price": 2.25,
+        "co2": 0.12,
+    },
+}

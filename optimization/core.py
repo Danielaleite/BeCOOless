@@ -31,7 +31,17 @@ def compute_cost(amounts, factors):
 def minimize(objective, constraints):
     """Solves a Knapsack problem. Modifies variables of the objective function."""
     problem = cp.Problem(cp.Minimize(objective), constraints)
-    problem.solve(solver="ECOS_BB")
+
+    solver_options = {
+        "max_iters": 1000,  # default: 100
+        # "abstol": 1e-7,  # default: 1e-8
+        # "reltol": 1e-7,  # default: 1e-8
+        # "feastol": 1e-7,  # default: 1e-8
+        # "abstol_inacc": 5e-4,  # default: 5e-5
+        # "reltol_inacc": 5e-4,  # default: 5e-5
+        # "feastol_inacc": 1e-3,  # default: 1e-4
+    }
+    problem.solve(solver="ECOS_BB", **solver_options)
 
     return problem.value
 
@@ -64,7 +74,53 @@ def group_by_categories(product_ids, flat_vector):
     return transformed_vector
 
 
-def solve_optimal_price(product_ids, target_amounts, units, prices, co2_emissions):
+def _check_input(product_ids, target_amounts, units, prices, co2_emissions):
+    """Check inputs to optimizer for types and dimensions."""
+    # check types
+    if not isinstance(product_ids, list):
+        raise ValueError(f"product_ids must be a list. Got {product_ids}")
+    if not isinstance(target_amounts, (list, tuple)):
+        raise ValueError(f"target_amounts must be a list/tuple. Got {target_amounts}")
+    if not isinstance(units, np.ndarray):
+        raise ValueError(f"units must be numpy.ndarray. Got {units}")
+    if not isinstance(prices, np.ndarray):
+        raise ValueError(f"prices must be numpy.ndarray. Got {prices}")
+    if not isinstance(co2_emissions, np.ndarray):
+        raise ValueError(f"co2_emissions must be numpy.ndarray. Got {co2_emissions}")
+
+    # length checks
+    # check non-empty product pools for each category
+    for category_idx, products in enumerate(product_ids):
+        if not isinstance(products, list):
+            raise ValueError(f"Items of product_ids must be lists. Got {product}")
+        if len(products) == 0:
+            raise ValueError(f"No products for category {category_idx}")
+
+    if len(product_ids) != len(target_amounts):
+        raise ValueError(f"product_ids and target_amounts must have same length")
+
+    num_products = sum(len(products) for products in product_ids)
+
+    shape = (num_products,)
+    if not units.shape == shape:
+        raise ValueError(f"units must have shape {shape}. Got {units.shape}")
+    if not prices.shape == shape:
+        raise ValueError(f"prices must have shape {shape}. Got {prices.shape}")
+
+    if not co2_emissions.shape == shape:
+        raise ValueError(
+            f"co2_emissions must have shape {shape}. Got {co2_emissions.shape}"
+        )
+
+
+def solve_optimal_price(
+    product_ids,
+    target_amounts,
+    units,
+    prices,
+    co2_emissions,
+    check_inputs=False,
+):
     """Find shopping list with lowest price.
 
     Solves a constrained optimization problem under the hood.
@@ -78,6 +134,7 @@ def solve_optimal_price(product_ids, target_amounts, units, prices, co2_emission
         units (numpy.array): Flattened units per amount for the pool of products.
         prices (numpy.array): Flattened prices for the pool of products.
         co2_emissions (numpy.array): Flattened CO₂ emissions for the pool of products.
+        check_inputs (bool): Perform a check on the inputs.
 
     Returns:
         (amounts, price, co2_emissions)
@@ -87,6 +144,9 @@ def solve_optimal_price(product_ids, target_amounts, units, prices, co2_emission
         - price (float) is the shopping list's price.
         - co2_emission (float) is the shopping list's CO₂ footprint.
     """
+    if check_inputs:
+        _check_input(product_ids, target_amounts, units, prices, co2_emissions)
+
     category_count = [len(products) for products in product_ids]
 
     num_variables = sum(category_count)
@@ -114,6 +174,7 @@ def solve_optimal_co2(
     co2_emissions,
     threshold,
     cheap_price,
+    check_inputs=False,
 ):
     """Find shopping list with lowest CO₂ footprint. Budget is extended by a threshold.
 
@@ -131,6 +192,7 @@ def solve_optimal_co2(
         threshold (float): Tolerance by which the budget may be extended.
         cheap_price (float): Budget (e.g. the cheapest price to realize the shopping
             list).
+        check_inputs (bool): Perform a check on the inputs.
 
     Returns:
         (amounts, price, co2_emissions)
@@ -140,6 +202,9 @@ def solve_optimal_co2(
         - price (float) is the shopping list's price.
         - co2_emission (float) is the shopping list's CO₂ footprint.
     """
+    if check_inputs:
+        _check_input(product_ids, target_amounts, units, prices, co2_emissions)
+
     category_count = [len(products) for products in product_ids]
 
     num_variables = sum(category_count)
@@ -156,6 +221,10 @@ def solve_optimal_co2(
     cost_co2_emissions = compute_cost(amounts, co2_emissions)
 
     solution_co2_emissions = minimize(cost_co2_emissions, constraints)
+
+    if amounts.value is None:
+        raise RuntimeError("Optimizer did not converge")
+
     solution_amounts = np.round(amounts.value).astype(np.int32)
     solution_price = compute_cost(solution_amounts, prices)
     solution_amounts = group_by_categories(product_ids, solution_amounts)
