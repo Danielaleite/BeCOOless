@@ -202,7 +202,7 @@ def solve_optimal_CO2(
     return solution_amounts, solution_price, solution_CO2_emissions
 
 
-def demo(shopping_list, offer, threshold):
+def demo(shopping_list, offer, threshold, verbose=False):
     """Run a demo."""
 
     ############################################################################
@@ -218,33 +218,37 @@ def demo(shopping_list, offer, threshold):
         target_categories, pool
     )
 
-    print("Optimization-relevant information:")
-    print("\tTarget categories: ", target_categories)
-    print("\tTarget amounts:    ", target_amounts)
-    print("\tSearch space:      ", product_ids)
-    print("\tUnits per amount:  ", units)
-    print("\tPrices:            ", prices)
-    print("\tCO2 emissions:     ", CO2_emissions)
+    if verbose:
+        print("Optimization-relevant information:")
+        print("\tTarget categories: ", target_categories)
+        print("\tTarget amounts:    ", target_amounts)
+        print("\tSearch space:      ", product_ids)
+        print("\tUnits per amount:  ", units)
+        print("\tPrices:            ", prices)
+        print("\tCO2 emissions:     ", CO2_emissions)
 
-    print("")
+        print("")
 
-    print("Shopping list :", shopping_list)
-    print("Products      :", product_ids)
+        print("Shopping list :", shopping_list)
+        print("Products      :", product_ids)
 
-    print("")
+        print("")
+
     ############################################################################
     #                    Optimal solution in terms of money                    #
     ############################################################################
     cheap_amounts, cheap_price, cheap_CO2_emission = solve_optimal_price(
         product_ids, target_amounts, units, prices, CO2_emissions
     )
-    print_solution(
-        cheap_amounts,
-        cheap_price,
-        cheap_CO2_emission,
-        description="(optimal price)",
-    )
-    print("")
+
+    if verbose:
+        print_solution(
+            cheap_amounts,
+            cheap_price,
+            cheap_CO2_emission,
+            description="(optimal price)",
+        )
+        print("")
 
     ############################################################################
     #                     Optimal solution in terms of CO2                     #
@@ -258,12 +262,14 @@ def demo(shopping_list, offer, threshold):
         threshold,
         cheap_price,
     )
-    print_solution(
-        green_amounts,
-        green_price,
-        green_CO2_emission,
-        description=f"(CO2-optimized with threshold {threshold})",
-    )
+
+    if verbose:
+        print_solution(
+            green_amounts,
+            green_price,
+            green_CO2_emission,
+            description=f"(CO2-optimized with threshold {threshold})",
+        )
 
     return (
         (cheap_amounts, cheap_price, cheap_CO2_emission),
@@ -317,7 +323,7 @@ if __name__ == "__main__":
     (
         (cheap_amounts, cheap_price, cheap_CO2_emission),
         (green_amounts, green_price, green_CO2_emission),
-    ) = demo(dummy_shopping_list, dummy_offer, dummy_threshold)
+    ) = demo(dummy_shopping_list, dummy_offer, dummy_threshold, verbose=True)
 
     # verify correctness
     assert cheap_amounts == [[3, 0], [2, 0]]
