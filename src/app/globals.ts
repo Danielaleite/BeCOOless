@@ -1,14 +1,16 @@
-import { BuyingItem } from "./views/buying-item"
+import { ShoppingItem } from "./views/shopping-item"
 
 
 
 export class Globals {
 
 
-    static supermarket: string
+    static supermarket: string = 'Rewe'
 
-    static threshold: number
+    static threshold: number = 5
 
-    static shoppingList: BuyingItem[] = []
+    static shoppingList: ShoppingItem[] = [{name: 'bananas', amount: 2}]
+
+    static optShoppingList: ShoppingItem[]
 
 }

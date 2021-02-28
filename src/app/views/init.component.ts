@@ -5,7 +5,7 @@ import { Router } from "@angular/router";
   template: `
   
    
-  <div>
+  <div >
 
     <div class="logo-wrapper">
 
@@ -13,7 +13,7 @@ import { Router } from "@angular/router";
       
     </div>
 
-    <div style="margin-bottom: 10%;">
+    <div style="margin-bottom: 40px;">
 
       <h4>Be COOL</h4> 
       
@@ -25,7 +25,11 @@ import { Router } from "@angular/router";
       
     </div>
     
+    <div>
+
       <div class="btn bottom" (click)="route()">Get started</div>
+
+    </div>
 
   </div>
 

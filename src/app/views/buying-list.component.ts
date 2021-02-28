@@ -1,35 +1,40 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
-import { BuyingItem } from './buying-item';
+import {filter, map, startWith} from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { Globals } from '../globals';
 import { ItemService } from '../provider/item.service';
+import { ShoppingItem } from './shopping-item';
+import { DB } from '../data';
 
 
 @Component({
-  selector: 'init',
+  selector: 'buying-list',
   template: `
 
 
+  <div class="search-bar-wrapper">
+    
     <mat-form-field class="search-bar">
-      <mat-label>Search {{ supermarket }}</mat-label>
+      <mat-label>Search in {{ supermarket }}</mat-label>
       <input type="text" id="item-input" matInput [formControl]="barFormControl" [matAutocomplete]="auto" >
       <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-        <mat-option *ngFor="let item of filteredOptions | async" (click)="add($event, item)" [value]="item">
-          {{item.name}}
-        </mat-option>
+        
       </mat-autocomplete>
     </mat-form-field>
 
+    <div class="icon basket">
+      <div *ngIf="basketAmount > 0" class="basket-notification">{{ basketAmount }}</div>
+    </div>
+  </div>
 
 
 
     <div id="buying-list-wrapper">
 
       <ul>
-        <li *ngFor="let item of items">
+        <li *ngFor="let item of filteredOptions | async">
             
           <div>{{ item.name }}</div>
           <div><img src="./assets/images/empty-image.jpg" /></div>
@@ -46,19 +51,44 @@ import { ItemService } from '../provider/item.service';
     </div>
 
   
-    <div class="btn bottom-side" (click)="route()">Reduce CO2</div>
+    <div class="btn bottom-fixed" (click)="route()">Reduce CO2</div>
 
   `,
   styles: [
     `
     
-      .search-bar {
-        width: 100%;
-      }
+    .search-bar-wrapper {
+
+      display:flex;
+
+    }
+    .search-bar {
+      width: 100%;
+    }
+    .search-bar-wrapper .icon.basket { 
+
+      position:relative;
+    }
+
+    .basket-notification {
+
+      position:absolute;
+      right: 0px;
+      top: 0px;
+
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      text-align:center;
+      font-size: .7rem;
+
+      background-color: #1FCC79;
+      border-radius: 100%;
+    }
 
 
       #buying-list-wrapper {
-
+        margin-bottom: 100px;
       }
       
       #buying-list-wrapper ul {
@@ -111,44 +141,43 @@ import { ItemService } from '../provider/item.service';
         -o-user-select: none;
       }
 
+
+
+      .btn.bottom-fixed {
+
+        position: fixed;
+
+        bottom: 20px;
+        left: 10%
+      }
     `
   ]
 })
 export class BuyingListComponent implements AfterViewInit {
 
   public barFormControl = new FormControl()
-  public buyingList: BuyingItem[] = []
-    
-  public items: BuyingItem[] = [
-    {
-      name: 'A',
-      amount: 0,
-      category: 'AA',
-      price: 10,
-      co2: 5
-    },
-    {
-      name: 'B',
-      amount: 0,
-      category: 'BB',
-      price: 15,
-      co2: 55
-    },
-    {
-      name: 'C',
-      amount: 0,
-      category: 'BB',
-      price: 15,
-      co2: 55
-    },
-  ]
+  public get buyingList() {
+
+    return Globals.shoppingList
+  }
+
+  public get basketAmount() :number {
+    return this.buyingList.length
+  }
+
+  public items: ShoppingItem[] = []
   
-  filteredOptions: Observable<BuyingItem[]>;
+  filteredOptions: Observable<ShoppingItem[]>;
   
 
   constructor(public router: Router, public itemService: ItemService) {
 
-    itemService.query('BLUB')
+    DB.forEach(data => {
+      this.items.push({
+        name: data[0].toUpperCase() + data.substr(1).toLowerCase(),
+        amount: 0
+      })
+    })
   }
 
   get supermarket() {
@@ -156,6 +185,10 @@ export class BuyingListComponent implements AfterViewInit {
     return Globals.supermarket
   }
 
+  get itemsList() {
+
+    return this.filteredOptions == null ? this.items : this.filteredOptions
+  }
 
   ngOnInit() {
     this.filteredOptions = this.barFormControl.valueChanges
@@ -171,11 +204,11 @@ export class BuyingListComponent implements AfterViewInit {
 
   }
 
-  displayFn(user: BuyingItem): string {
-    return user && user.name ? user.name : '';
+  displayFn(item: ShoppingItem): string {
+    return item && item.name ? item.name : '';
   }
 
-  private _filter(name: string): BuyingItem[] {
+  private _filter(name: string): ShoppingItem[] {
     const filterValue = name.toLowerCase();
 
     return this.items.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
@@ -188,7 +221,7 @@ export class BuyingListComponent implements AfterViewInit {
 
 
 
-  add(e?, addItem?:BuyingItem) {
+  add(e?, addItem?:ShoppingItem) {
 
     for(let item of this.buyingList) {
 
@@ -211,7 +244,7 @@ export class BuyingListComponent implements AfterViewInit {
     return false
   } 
 
-  remove(e?, item?:BuyingItem) {
+  remove(e?, item?:ShoppingItem) {
 
     if(item && item.amount > 0) item.amount -= 1
   } 

@@ -7,7 +7,7 @@ import { Globals } from '../globals';
 
 
 @Component({
-  selector: 'init',
+  selector: 'location',
   template: `
 
 
@@ -65,11 +65,11 @@ export class LocationComponent {
   public barFormControl = new FormControl()
   public supermarket: string    
   public supermarkets: string[] = [ 
-    "Rewe Mohlstraße",
-    "Rewe Südstadt",
-    "Edeka",
-    "Kaufland",
-    "Alnatura"
+    "Rewe",
+    // "Rewe Südstadt",
+    // "Edeka",
+    // "Kaufland",
+    // "Alnatura"
   ]
   
   filteredOptions: Observable<string[]>;

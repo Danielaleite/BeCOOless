@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { InitComponent } from './views/init.component'
 import { LocationComponent } from './views/location.component'
@@ -22,6 +23,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import { ItemService } from './provider/item.service';
 import { CompareComponent } from './views/compare.component';
+import { OptimizedListComponent } from './views/optimized-list.component';
 
 
 const routes: Routes = [
@@ -30,6 +32,7 @@ const routes: Routes = [
   { path: 'list', component: BuyingListComponent },
   { path: 'login', component: LoginComponent },
   { path: 'compare', component: CompareComponent },
+  { path: 'optimized', component: OptimizedListComponent },
   { path: '**', redirectTo: '/intro', pathMatch: 'full' },
 ];
 
@@ -42,13 +45,15 @@ const routes: Routes = [
     BuyingListComponent,
     SearchBarComponent,
     CompareComponent,
-    LoginComponent
+    LoginComponent,
+    OptimizedListComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
+    HttpClientModule,
     RouterModule.forRoot(routes),
     BrowserAnimationsModule,
 
