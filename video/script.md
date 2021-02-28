@@ -17,7 +17,7 @@ too!
 
 (Introduction)
 
-Our goal, at Team BeCOO-Less, is to empower every citizen to become more carbon
+Our goal, at Team BeCOOless, is to empower every citizen to become more carbon
 conscious. We are a group of students from Europe determined to help generate
 momentum for a greener and brighter future. We come from all parts of the world,
 having lived in diverse and multi-cultural environments. As such, we understand
@@ -46,13 +46,13 @@ Now meet Mike. He is a young individual who seeks to live sustainably while
 staying on a budget. Mike is overwhelmed by the plethora of available options at
 the supermarket. How should he choose? Sometimes, he simply buys the cheapest
 option, but he would not mind buying a much greener, slightly more expensive
-product. This is where BeCOO-Less, the app we've developed, comes in. BeCOO-Less
+product. This is where BeCOOless, the app we've developed, comes in. BeCOOless
 helps Mike to choose greener alternatives while respecting his budget.
 
 (Platform presentation)
 
 Using the app is very simple. First, you need to compose a shopping list. Based
-on your preferred supermarket, as well as current and past orders, BeCOO-Less
+on your preferred supermarket, as well as current and past orders, BeCOOless
 knows which items you would usually buy. Using the slider, our machine learning
 algorithm, informs you about greener alternatives that can lead to huge savings
 in carbon emissions! In this manner, the app enables you to make the most
@@ -60,7 +60,7 @@ impactful decision for spending an extra dollar.
 
 (Business plan)
 
-BeCOO-Less supports local business! By partnering up with chain and local
+BeCOOless supports local business! By partnering up with chain and local
 supermarkets, we are able to obtain the most accurate data for the carbon
 emission of each product. Additionally, we'll help supermarkets understand their
 customers, and how to better serve their needs for greener products. Premium
