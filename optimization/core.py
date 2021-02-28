@@ -119,7 +119,7 @@ def solve_optimal_price(
     units,
     prices,
     co2_emissions,
-    check_inputs=False,
+    check_inputs=True,
 ):
     """Find shopping list with lowest price.
 
@@ -174,7 +174,7 @@ def solve_optimal_co2(
     co2_emissions,
     threshold,
     cheap_price,
-    check_inputs=False,
+    check_inputs=True,
 ):
     """Find shopping list with lowest CO₂ footprint. Budget is extended by a threshold.
 

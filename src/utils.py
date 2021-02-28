@@ -12,49 +12,96 @@ HTML_REGEX = r"<(\/|)(b|i|u)>"
 GRAMS_REGEX = r"(?:^||>)\(?\s*\d+[\.\,]*\d*\s*(?:grams)s?\)?(?:|[^\da-z.]|$)"
 
 
-def parse_current_items_list(current_items):
+def extract_category_pool(category, offer):
+    """Extract all products from data which belong to one ``category``."""
+    category_pool = {
+        product_id: product_info
+        for product_id, product_info in offer.items()
+        if product_info["category"] == category
+    }
+
+    return category_pool
+
+def flatten(iterable):
+    """Recursively iterate lists and tuples.
+    """
+    for elm in iterable:
+        if isinstance(elm, (list, tuple)):
+            for relm in flatten(elm):
+                yield relm
+        else:
+            yield elm
+
+
+def parse_current_items_list(db, current_categories,location):
     """
     Extracts necessary information from app's current item list.
 
     Args:
-        current_items: List of current items on app
-
+        current_categories: List of current categories in list
+        location: Location to shop
     Returns:
         Dictionary of all parsed current intentions.
     """
-    # Dictionary of all parsed current intentions
-    current_items_dict = dict()
 
-    for item in current_items:
-        item_dict = dict()
+    search_space = []
+    prices = []
+    carbons = []
+    units = []
+    for category in current_categories:
+        cursor = db.stock_table.find({
+            "$and": [
+                {"Location": location},
+                {"Category": category}
+            ]
+        })
+        item = [c for c in cursor]
+        search = [c['Product Name'] for c in item]
+        unit = [c['Unit'] for c in item]
+        price = [c['Price'] for c in item]
+        carbon = [c['CO2'] for c in item]
+        search_space.append(search)
+        units.extend((unit))
+        prices.extend(price)
+        carbons.extend(carbon)
 
-        # Get category
-        item_dict["name"] = re.sub(HTML_REGEX, "", item["nm"], count=LARGE_NUMBER, flags=re.IGNORECASE)
-        item_dict["category"] = re.search(HTML_REGEX, item["cat"], re.IGNORECASE)
-        item_dict["carbon"] = re.search(HTML_REGEX, item["carbon"], re.IGNORECASE)
-        item_dict["cost"] = re.search(HTML_REGEX, item["cost"], re.IGNORECASE)
-        item_dict["location"] = re.search(HTML_REGEX, item["loc"], re.IGNORECASE)
-        item_dict["weight"] = 0
+    target_amounts = []
+    for category in current_categories:
+        target_amounts.append(current_categories[category])
 
-        kg = re.search(KG_REGEX, item["w"], re.IGNORECASE)
-        if kg is not None:
-            kg = kg[0].strip()
-            kg = float(kg.split(" ")[0].strip())
-            item_dict["weight"] += kg * 1000
+    new_units = []
+    for unit in units:
+        if unit[-2:] == "KG":
+            new_units.extend([float(unit[:-2])])
+        elif unit[-1] == "G":
+            new_units.extend([float(unit[:-1])])
 
-        grams = re.search(GRAMS_REGEX, item["w"], re.IGNORECASE)
-        if grams is not None:
-            grams = grams[0].strip()
-            grams = float(grams.split(" ")[0].strip())
-            item_dict["weight"] += grams
+    target_amounts = tuple(target_amounts)
+    search_space = tuple(search_space)
+    prices = tuple(prices)
+    carbons = tuple(carbons)
+    units = tuple(new_units)
 
+    print(f'Search Space: {search_space}')
+    print(f'Units: {units}')
+    print(f'Amounts: {target_amounts}')
+    print(f'Prices: {prices}')
+    print(f'CO2 Emissions: {carbons}')
 
+    # print(type(search_space))
+    # print(type(units))
+    # print(type(target_amounts))
+    # print(type(prices))
+    # print(type(carbons))
+    parsed_dict = {
+        "search": search_space,
+        "units": units,
+        "amounts": target_amounts,
+        "prices": prices,
+        "carbons": carbons
+    }
 
-        # Add current task to the dictionary of all parsed current intentions
-        current_items_dict.setdefault(item_dict["id"], [])
-        current_items_dict[item_dict["id"]].append(item_dict)
-
-    return current_items_dict
+    return parsed_dict
 
 
 def delete_sensitive_data(projects):
@@ -85,109 +132,30 @@ def delete_sensitive_data(projects):
     return items
 
 
-def flatten_intentions(projects):
-    for goal in projects:
-        for task in goal["ch"]:
-            if "ch" in task:
-                goal["ch"].extend(task["ch"])
-                del task["ch"]
-    return projects
 
-
-def get_final_output(item_list, round_param, points_per_hour, user_datetime):
+def get_final_output(search_space, output, flag,rounding):
     """
     Input is list of items
     Outputs list of items for today with fields:
         id, nm, lm, parentId, pcp, est, val (=reward)
     """
 
-    def get_human_readable_name(item):
-        item_name = item["nm"]
+    if flag == "optimal_price":
+        return \
+            {
+                "price": round(output["price"],int(rounding)),
+                "carbon": round(output["carbon"], int(rounding))
+            }
 
-        # Remove #date regex
-        item_name = re.sub(fr"#\s*{DATE_REGEX}", "", item_name, re.IGNORECASE)
-
-        # Remove deadline
-        item_name = re.sub(DEADLINE_REGEX, "", item_name, re.IGNORECASE)
-
-        # Remove time estimation
-        item_name = re.sub(TIME_EST_REGEX, "", item_name, re.IGNORECASE)
-
-        # Remove importance
-        item_name = re.sub(IMPORTANCE_REGEX, "", item_name, re.IGNORECASE)
-
-        # Remove essential
-        item_name = re.sub(ESSENTIAL_REGEX, "", item_name, re.IGNORECASE)
-
-        print(f'item: {item}')
-        # Remove tags
-        for tag in TAGS:
-            tag_regex = get_tag_regex(tag)
-            item_name = re.sub(tag_regex, "", item_name, re.IGNORECASE)
-
-        item_name = item_name.strip()
-
-        if len(re.sub(OUTPUT_GOAL_CODE_REGEX, "", item_name).strip()) == 0:
-            raise NameError(f"Item {item['nm']} has no name!")
-
-        # Append time information
-        hours, minutes = item["est"] // 60, item["est"] % 60
-
-        item_name += " (takes about "
-        if hours > 0:
-            if hours == 1:
-                item_name += f"1 hour"
-            else:
-                item_name += f"{hours} hours"
-        if minutes > 0:
-            if hours > 0:
-                item_name += " and "
-            if minutes == 1:
-                item_name += f"1 minute"
-            else:
-                item_name += f"{minutes} minutes"
-
-        if hasattr(item, "deadline_datetime") and \
-                item["deadline_datetime"] is not None:
-            item_name += ", due on "
-
-            td = item["deadline_datetime"] - user_datetime
-            if td.days < 7:
-                weekday = item["deadline_datetime"].weekday()
-                item_name += WEEKDAYS[weekday]
-            else:
-                item_name += str(item["deadline_datetime"])[:-3]
-
-        item_name += ")"
-
-        return item_name
-
-    keys_needed = ["id", "nm", "lm", "parentId", "pcp", "est", "val", "imp"]
-
-    # for now only look at first dictionary
-    current_keys = set(item_list[0].keys())
-    extra_keys = list(current_keys - set(keys_needed))
-    missing_keys = list(set(keys_needed) - current_keys)
-
-    for item in item_list:
-
-        item["nm"] = get_human_readable_name(item)
-
-        if points_per_hour:
-            item["val"] = str(round(item["pph"], round_param)) + '/h'
-        else:
-            item["val"] = round(item["val"], round_param)
-
-        for extra_key in extra_keys:
-            if extra_key in item:
-                del item[extra_key]
-
-        for missing_key in missing_keys:
-            if missing_key not in item:
-                item[missing_key] = None
-
-    return item_list
-
+    elif flag == "optimal_co2":
+        final_dict = dict()
+        for i, category in enumerate(search_space):
+            for j, item in enumerate(category):
+                if output["amount"][i][j] > 0:
+                    final_dict[item] = output["amount"][i][j]
+        final_dict["price"] = round(output["price"], int(rounding))
+        final_dict["carbon"] = round(output["carbon"], int(rounding))
+        return final_dict
 
 
 

@@ -64,7 +64,6 @@ class PostResource(RESTResource):
 
         # Start timer
         main_tic = time.time()
-
         with stopit.ThreadingTimeout(TIMEOUT_SECONDS) as to_ctx_mgr:
             assert to_ctx_mgr.state == to_ctx_mgr.EXECUTING
 
@@ -72,10 +71,7 @@ class PostResource(RESTResource):
             log_dict = {
                 "start_time": datetime.now(),
             }
-
-            # Initialize dictionary that inspects time taken by each method
             timer = dict()
-
             try:
                 # Load fixed time if provided
                 if "time" in jsonData.keys():
@@ -86,21 +82,24 @@ class PostResource(RESTResource):
 
                 # Start timer: reading parameters
                 tic = time.time()
-
+                # print("VPATH")
+                # for v in vpath:
+                #     print(v)
                 # Compulsory parameters
-                method = vpath[0]
+                method = vpath[0]  # Access the prototype module
                 rounding = vpath[1]  # Number of decimals
-
+                print(f'Rounding: {rounding}')
                 # tree = vpath[-3]  # Dummy parameter
-                user_key = vpath[-2]
-                api_method = vpath[-1]
-
+                user_key = vpath[-2]  # User Key
+                api_method = vpath[-1]  # Which function in module to be accessed
+                print(f'User Key: {user_key}"')
+                print(f'API Method: {api_method}')
                 # Additional parameters (the order of URL input matters!)
                 # Casting to other data types is done within the functions that
                 # use these parameters
-                parameters = [item for item in vpath[2:-3]]
-                # print(f'parameters: {parameters}')
-                # Is there a user key
+                parameters = [item for item in vpath[2:-2]]
+                print(f'parameters: {parameters}')
+                # Add user key
                 try:
                     log_dict["user_id"] = jsonData["userkey"]
                 except:
@@ -111,38 +110,20 @@ class PostResource(RESTResource):
                     cherrypy.response.status = 403
                     return json.dumps(status + " " + CONTACT)
 
-                # Initialize SMDP parameters
-                params = dict({
-                    "cost_threshold": 1
-                })
 
-                """ Reading SMDP parameters """
+
+                """ Reading Prototype parameters """
                 if method == "prototype":
-
                     try:
-                        tic = time.time()
+                        method_tic = time.time()
 
-                        params.update({
-                            "cost_threshold":            parameters[0]
-                        })
+                        print(f'JsonData.keys: {jsonData.keys()}')
 
-                        # Get threshold from database (if available)
-                        query = list(db.pr_transform.find(
-                            {
-                                "user_id": jsonData["userkey"]
-                            }
-                        ))
-                        if len(query) > 0 and api_method == "previousThreshold":
-                            query = query[-1]
-                            params["cost_threshold"] = query["cost_threshold"]
-                        else:
-                            query = None
-
-                        # Imposed bias value for f'(s, a) = m * f(s, a) + b
                         if "cost_threshold" in jsonData.keys():
                             params["cost_threshold"] = jsonData["cost_threshold"]
                         cost_threshold = params["cost_threshold"]
-                        timer["Reading parameters"] = time.time() - tic
+                        print(f'Loading Thresh: {cost_threshold}')
+                        timer["Reading parameters"] = time.time() - method_tic
 
                     except:
                         status = "There was an issue with the API input " \
@@ -152,7 +133,12 @@ class PostResource(RESTResource):
                         cherrypy.response.status = 403
                         return json.dumps(status)
 
-
+                else:  # Different module, not yet implemented
+                    status = "The module you wanteed to access hasn't been implemented yet. Please contact " \
+                             "us at sakshamconsul@gmail.com."
+                    store_log(db.request_log, log_dict, status=status)
+                    cherrypy.response.status = 403
+                    return json.dumps(status)
                 # Last input parameter
                 try:
                     round_param = int(rounding)
@@ -176,13 +162,24 @@ class PostResource(RESTResource):
 
                     # Must be provided on each store (if needed)
                     "lm": None,
-                    "mixing_parameter": None,
                     "status": None,
                     "user_id": None,
                 })
 
+                try:
+                    location = jsonData["location"]
+                except:
+                    status = "No Location Field in Body!" \
+                             "Please contact us at " \
+                             "sakshamconsul@gmail.com"
+                    store_log(db.request_log, log_dict, status=status)
+                    cherrypy.response.status = 403
+                    return json.dumps(status)
+
                 # Update last modified
                 log_dict["lm"] = jsonData["updated"]
+
+                log_dict["location"] = location
 
                 # Store time: reading parameters
                 timer["Reading parameters"] = time.time() - tic
@@ -192,8 +189,8 @@ class PostResource(RESTResource):
 
                 # Parse current intentions
                 try:
-                    current_items = parse_current_items_list(
-                        jsonData["currentItemsList"])
+                    parsed_dict = parse_current_items_list(db,
+                        jsonData["shopping_list"], location)
                 except Exception as error:
 
                     status = str(error)
@@ -211,137 +208,140 @@ class PostResource(RESTResource):
 
 
                 # Store current intentions
-                log_dict["current_intentions"] = current_items
+                log_dict["current_categories"] = jsonData["shopping_list"]
 
                 # Store time: parsing current intentions
                 timer["Parsing current items"] = time.time() - tic
 
 
-
                 if method == "prototype":
+                    search_space = list(parsed_dict["search"])
+                    print(f'Search: {search_space}')
+                    units = np.array(parsed_dict["units"])
+                    target_amounts = list(parsed_dict["amounts"])
+                    prices = np.array(parsed_dict["prices"])
+                    co2_emissions = np.array(parsed_dict["carbons"])
 
-                    tic = time.time()
+                    if api_method == "optimal_price":
+                        tic_function = time.time()
+                        try:
+                            output = function_call(
+                                flag=api_method, search_space=search_space, target_amounts=target_amounts, units=units,
+                                prices=prices, co2_emissions=co2_emissions
+                            )
+                            log_dict["cheap_price"] = output["price"]
+                        except Exception as error:
+                            status = str(error)
+                            # Remove personal data
+                            anonymous_error = parse_error_info(status)
+                            # Store error in DB
+                            store_log(db.request_log, log_dict, status=anonymous_error)
 
-                    final_tasks = assign_points(
-                        current_items, threshold=cost_threshold
-                    )
+                            status += " Please take a look at your App inputs " \
+                                      "and then try again. "
+                            cherrypy.response.status = 403
+                            return json.dumps(status + CONTACT)
 
-                    # Add database entry if one does not exist
-                    if query is None:
-                        db.pr_transform.insert_one({
-                            "user_id": jsonData["userkey"],
-                            "cost_threshold":    params["cost_threshold"],
-                        })
+                    elif api_method == "optimal_co2":
+                        tic_function = time.time()
+                        try:
+                            output = function_call(
+                                flag="optimal_price", search_space=search_space, target_amounts=target_amounts,
+                                units=units,
+                                prices=prices, co2_emissions=co2_emissions
+                            )
+                            cheap_price = output["price"]
+                        except Exception as error:
+                            status = str(error)
+                            # Remove personal data
+                            anonymous_error = parse_error_info(status)
+                            # Store error in DB
+                            store_log(db.request_log, log_dict, status=anonymous_error)
 
+                            status += " Please take a look at your App inputs " \
+                                      "and then try again. "
+                            cherrypy.response.status = 403
+                            return json.dumps(status + CONTACT)
+                        try:
+                            output = function_call(
+                                flag=api_method,search_space=search_space, target_amounts=target_amounts, units=units,
+                                prices=prices, co2_emissions=co2_emissions, cost_threshold=cost_threshold/100.0, cheap_price=cheap_price)
+                            print(f'Before Final Output: {output}')
+                        except Exception as error:
+                            status = str(error)
+                            # Remove personal data
+                            anonymous_error = parse_error_info(status)
+                            # Store error in DB
+                            store_log(db.request_log, log_dict, status=anonymous_error)
 
-                    timer["Run Prototype"] = time.time() - tic
-
-                else:
-                    status = "API method does not exist. Please contact us " \
-                             "at sakshamconsul@gmail.com."
-                    store_log(db.request_log, log_dict, status=status)
-                    cherrypy.response.status = 403
-                    return json.dumps(status)
-
-                # Start timer: Anonymizing data
-                tic = time.time()
-
-                # Update values in the tree
-                log_dict["tree"] = delete_sensitive_data(projects)
-
-                # Store time: Anonymizing date
-                timer["Anonymize data"] = time.time() - tic
-
-                print("aaa")
-
-                print(api_method, scheduler)
-                # TODO:
-                print(scheduler == "basic")
-
-
-                # Schedule tasks for today
-                if scheduler == "basic":
-                    try:
-                        # Get task list from the tree
-                        task_list = task_list_from_projects(projects)
-
-                        print("bbb")
-
-                        final_tasks = \
-                            basic_scheduler(task_list,
-                                            current_day=user_datetime,
-                                            duration_remaining=today_minutes)
-                    except Exception as error:
-                        print("lol")
-                        status = str(error) + ' '
-
-                        # Store error in DB
-                        store_log(db.request_log, log_dict, status=status)
-
-                        cherrypy.response.status = 403
-                        return json.dumps(status + CONTACT)
-
-
-
-                if api_method in \
-                        {"getBest"}:
-                    try:
-
-                        # Start timer: Storing human-readable output
-                        tic = time.time()
-
-                        # TODO:
-                        final_tasks = get_final_output(
-                            final_tasks, round_param, points_per_hour,
-                            user_datetime=user_datetime)
-
-                        # Store time: Storing human-readable output
-                        timer["Storing human-readable output"] = time.time() - tic
-
-                    except NameError as error:
-
-                        store_log(db.request_log, log_dict,
-                                  status="Task has no name!")
-                        cherrypy.response.status = 403
-                        return json.dumps(str(error) + " " + CONTACT)
-
-                    except:
-                        status = "Error while preparing final output."
-                        store_log(db.request_log, log_dict, status=status)
-                        cherrypy.response.status = 403
-                        return json.dumps(status + " " + CONTACT)
-
-                    # Start timer: Storing successful pull in database
-                    tic = time.time()
-
-                    store_log(db.request_log, log_dict, status="Successful pull!")
-
-                    # Store time: Storing successful pull in database
-                    timer["Storing successful pull in database"] = time.time() - tic
-
-                    # print("\n===== Optimal items =====")
-                    # for task in final_tasks:
-                    #     # print(f"{task['nm']} & {task['val']} \\\\")
-                    #     print(f"{task['nm']:100s} | {task['val']}")
-                    # print()
-
-                    if api_method == "speedTest":
-
-                        status = f"The procedure took " \
-                                 f"{time.time() - main_tic:.3f} seconds!"
-
-                        # Stop timer: Complete SMDP procedure
-                        timer["Complete SMDP procedure"] = \
-                            time.time() - main_tic
-
-                        return json.dumps({
-                            "status": status,
-                            "timer":  timer
-                        })
+                            status += " Please take a look at your App inputs " \
+                                      "and then try again. "
+                            cherrypy.response.status = 403
+                            return json.dumps(status + CONTACT)
 
                     else:
-                        # Return scheduled tasks
-                        return json.dumps(final_tasks)
+                        status = "API method (in Prototype module) does not exist. Please contact us " \
+                                 "at sakshamconsul@gmail.com."
+                        store_log(db.request_log, log_dict, status=status)
+                        cherrypy.response.status = 403
+                        return json.dumps(status)
+                    timer["Run Function"] = time.time() - tic_function
+
+                    # Start timer: Anonymizing data
+                    tic_anon = time.time()
+
+
+                    if api_method in \
+                            {"optimal_price", "optimal_co2"}:
+                        try:
+
+                            # Start timer: Storing human-readable output
+                            tic = time.time()
+
+                            # TODO:
+                            final_shopping_list = get_final_output(search_space, output, api_method, rounding)
+                            # Store time: Storing human-readable output
+                            timer["Storing human-readable output"] = time.time() - tic
+
+                        except NameError as error:
+
+                            store_log(db.request_log, log_dict,
+                                      status="Task has no name!")
+                            cherrypy.response.status = 403
+                            return json.dumps(str(error) + " " + CONTACT)
+
+                        except:
+                            status = "Error while preparing final output."
+                            store_log(db.request_log, log_dict, status=status)
+                            cherrypy.response.status = 403
+                            return json.dumps(status + " " + CONTACT)
+
+                        # Start timer: Storing successful pull in database
+                        tic = time.time()
+
+                        store_log(db.request_log, log_dict, status="Successful pull!")
+
+                        # Store time: Storing successful pull in database
+                        timer["Storing successful pull in database"] = time.time() - tic
+
+
+                        if api_method == "speedTest":
+
+                            status = f"The procedure took " \
+                                     f"{time.time() - main_tic:.3f} seconds!"
+
+                            # Stop timer: Complete SMDP procedure
+                            timer["Complete Optimization procedure"] = \
+                                time.time() - main_tic
+
+                            return json.dumps({
+                                "status": status,
+                                "timer":  timer
+                            })
+
+                        else:
+                            # Return scheduled tasks
+                            return json.dumps(final_shopping_list)
 
                 else:
                     status = "API Method not implemented. Please contact us " \
@@ -384,7 +384,7 @@ class Root(object):
         return "Server is up!"
         # return "REST API for App Project"
 
-def update():
+def update(db):
     stock_list = pd.read_csv('./data_gen/StockInfo.csv')
     converted_stock_dict = pd.DataFrame.to_dict(stock_list, orient="records")
     # # To add data
@@ -412,7 +412,7 @@ if __name__ == '__main__':
     stock_table = db["Inventory"]
 
     # update the Inventory
-    update()
+    update(db)
 
     conf = {
         '/':       {
