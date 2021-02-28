@@ -1,7 +1,5 @@
 """Dummy data set to demo the tool's usefulness."""
 
-import pprint
-
 import cvxpy as cp
 import numpy as np
 
