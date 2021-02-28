@@ -5,9 +5,11 @@ import sys
 import cherrypy
 from pymongo import MongoClient
 import time
+import pandas as pd
 
-frmo src.apis import *
+from src.api import *
 from src.utils import *
+
 
 
 CONTACT = "If you continue to encounter this issue, please contact us at " \
@@ -382,14 +384,35 @@ class Root(object):
         return "Server is up!"
         # return "REST API for App Project"
 
+def update():
+    stock_list = pd.read_csv('./data_gen/StockInfo.csv')
+    converted_stock_dict = pd.DataFrame.to_dict(stock_list, orient="records")
+    # # To add data
+    # db.stock_table.insert_many(converted_stock_dict)
 
+    for item in converted_stock_dict:
+        db.stock_table.update_one({
+            "$and": [
+                {"Location": item["Location"]},
+                {"Product Name": item["Product Name"]}
+            ]
+        }, {"$set": {"Price": item["Price"]}})
+    return 0
 if __name__ == '__main__':
     uri = "mongodb://climatechangers:climatechangers@127.0.0.1/climatechangers"
     client = MongoClient(uri)
     db = client["climatechangers"]
     collection = db["climatechangers"]
-    # conn = MongoClient(os.environ['MONGODB_URI'] + "?retryWrites=false")
-    # db = conn.heroku_g6l4lr9d
+
+    uri = "mongodb+srv://cool_usr:cool_pwd@becoolcluster.xv0y0.mongodb.net/BeCool"
+    client = MongoClient(uri)
+    # Creating database if it does not exist
+    db = client["BeCool"]
+    # Creating a collection (aka table)
+    stock_table = db["Inventory"]
+
+    # update the Inventory
+    update()
 
     conf = {
         '/':       {
