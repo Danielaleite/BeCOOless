@@ -15,7 +15,7 @@ import { Router } from "@angular/router";
 
     <div style="margin-bottom: 10%;">
 
-      <h4>Be C00L</h4> 
+      <h4>Be COOL</h4> 
       
     </div>
     
@@ -43,6 +43,7 @@ import { Router } from "@angular/router";
       justify-content:center;
       align-items:center;
       width: 100%;
+      max-width: 500px;
       margin-top: 20%;
       margin-bottom: 20%;
     }
@@ -65,6 +66,6 @@ export class InitComponent {
   
   public route(){
 
-    this.router.navigateByUrl('/location')
+    this.router.navigateByUrl('/login')
   } 
 }

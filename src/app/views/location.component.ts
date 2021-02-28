@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
-import { BuyingItem } from './buying-item';
 import { Router } from '@angular/router';
+import { Globals } from '../globals';
 
 
 @Component({
@@ -11,18 +11,54 @@ import { Router } from '@angular/router';
   template: `
 
 
-    <mat-form-field>
-      <mat-label>Location</mat-label>
-      <input type="text" matInput [formControl]="barFormControl" [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-        <mat-option *ngFor="let item of filteredOptions | async" [value]="item">
-          {{item.name}}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+
+    <h4>Choose your supermarket</h4>
+
+    <div class="search-bar-wrapper">
+      <div class="icon location">
+      </div>
+
+      <mat-form-field class="search-bar">
+        <mat-label>Location</mat-label>
+        <input type="text" matInput [formControl]="barFormControl" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let supermarket of filteredOptions | async" (click)="choose($event, supermarket)" [value]="supermarket">
+            {{supermarket}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+    </div>
 
     <div class="btn bottom" (click)="route()">Continue</div>
+
+
   `,
+  styles: [
+    
+    `
+
+      :host {
+        display:block;
+        padding: 20px 0px;
+      }
+    
+      .search-bar-wrapper {
+
+        display:flex;
+
+      }
+
+      .search-bar {
+
+        margin-left: 10px;
+        width: 100%
+      }
+    
+    
+    `
+
+  ]
 })
 export class LocationComponent {
 
@@ -36,7 +72,7 @@ export class LocationComponent {
     "Alnatura"
   ]
   
-  filteredOptions: Observable<BuyingItem[]>;
+  filteredOptions: Observable<string[]>;
   
 
   constructor(public router: Router) {
@@ -49,22 +85,29 @@ export class LocationComponent {
       .pipe(
         startWith(''),
         map(value => typeof value === 'string' ? value : value.name),
-        map(name => name ? this._filter(name) : this.supermarket.slice())
+        map(name => this._filter(name))
       );
   }
 
-  displayFn(user: BuyingItem): string {
-    return user && user.name ? user.name : '';
+  displayFn(supermarket: string): string {
+    return supermarket ? supermarket : '';
   }
 
-  private _filter(name: string): BuyingItem[] {
-    console.log(name)
+  private _filter(name: string): string[] {
     const filterValue = name.toLowerCase();
 
-    return this.items.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
+    return this.supermarkets.filter(option => option.toLowerCase().indexOf(filterValue) === 0);
   }
   public route(){
 
-    this.router.navigateByUrl('/list')
+    if(Globals.supermarket)
+      this.router.navigateByUrl('/list')
+  } 
+
+  
+
+  choose(e?, supermarket?:string){
+
+    Globals.supermarket = this.supermarket = supermarket
   } 
 }

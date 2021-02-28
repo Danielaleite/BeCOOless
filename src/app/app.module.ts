@@ -10,6 +10,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { InitComponent } from './views/init.component'
 import { LocationComponent } from './views/location.component'
 import { BuyingListComponent } from './views/buying-list.component'
+import { LoginComponent } from './views/login.component'
 
 
 import { SearchBarComponent } from './templates/search-bar.component';
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: 'intro', component: InitComponent },
   { path: 'location', component: LocationComponent },
   { path: 'list', component: BuyingListComponent },
+  { path: 'login', component: LoginComponent },
   { path: '**', redirectTo: '/intro', pathMatch: 'full' },
 ];
 
