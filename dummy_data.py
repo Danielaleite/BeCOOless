@@ -83,21 +83,20 @@ def extract_optimization_input(categories, pool):
 
     for category in categories:
         category_product_ids = []
-        category_prices = []
         category_CO2_emissions = []
 
         category_space = pool[category]
         for product_id, product_info in category_space.items():
             category_product_ids.append(product_id)
             units.append(product_info["unit"])
-            category_prices.append(product_info["price"])
+            prices.append(product_info["price"])
             category_CO2_emissions.append(product_info["CO2"])
 
         product_ids.append(category_product_ids)
-        prices.append(category_prices)
         CO2_emissions.append(category_CO2_emissions)
 
     units = np.array(units)
+    prices = np.array(prices)
 
     return product_ids, units, prices, CO2_emissions
 
@@ -153,8 +152,7 @@ def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emission
     )
 
     # set up objective
-    prices_flat = np.array(sum(prices, []))
-    cost_price = compute_cost(amounts, prices_flat)
+    cost_price = compute_cost(amounts, prices)
 
     # solve optimization
     solution_price = minimize(cost_price, constraints)
@@ -207,9 +205,7 @@ def solve_optimal_CO2(
     )
 
     # must be lower than threshold-ed cost
-    prices_flat = np.array(sum(prices, []))
-
-    cost_price = compute_cost(amounts, prices_flat)
+    cost_price = compute_cost(amounts, prices)
     constraints.append(cost_price <= (1 + user_threshold) * cost_cheapest)
 
     # set up objective
@@ -219,7 +215,7 @@ def solve_optimal_CO2(
     solution_CO2_emissions = minimize(cost_CO2_emissions, constraints)
     solution_amounts = np.round(amounts.value).astype(np.int32)
 
-    solution_price = compute_cost(solution_amounts, prices_flat)
+    solution_price = compute_cost(solution_amounts, prices)
 
     solution_transformed = []
     start = 0
