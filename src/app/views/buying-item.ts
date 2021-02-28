@@ -9,5 +9,6 @@ export interface BuyingItem {
     price: number,
     co2: number,
     location?: string
+    amount: number
 
 }

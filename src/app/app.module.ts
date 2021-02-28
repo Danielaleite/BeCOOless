@@ -20,6 +20,8 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
+import { ItemService } from './provider/item.service';
+import { CompareComponent } from './views/compare.component';
 
 
 const routes: Routes = [
@@ -27,6 +29,7 @@ const routes: Routes = [
   { path: 'location', component: LocationComponent },
   { path: 'list', component: BuyingListComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'compare', component: CompareComponent },
   { path: '**', redirectTo: '/intro', pathMatch: 'full' },
 ];
 
@@ -38,6 +41,8 @@ const routes: Routes = [
     LocationComponent,
     BuyingListComponent,
     SearchBarComponent,
+    CompareComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +58,7 @@ const routes: Routes = [
     MatFormFieldModule,
     MatInputModule 
   ],
-  providers: [],
+  providers: [ ItemService ],
   exports: [
     RouterModule
   ],

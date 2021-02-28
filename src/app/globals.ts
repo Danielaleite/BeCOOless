@@ -1,3 +1,4 @@
+import { BuyingItem } from "./views/buying-item"
 
 
 
@@ -8,5 +9,6 @@ export class Globals {
 
     static threshold: number
 
+    static shoppingList: BuyingItem[] = []
 
 }

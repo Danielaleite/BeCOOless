@@ -7,11 +7,13 @@ import { Router } from "@angular/router";
    
   <div id="login-wrapper">
 
-    <div><img src="./assets/images/login.png" /></div>
+    <div style="text-align:center;"><img style="width: 60%;" src="./assets/images/logo.png" /></div>
 
     <div class="btn" (click)="route()">Login</div>
     <div class="btn" (click)="route()">Register</div>
     <div class="btn" (click)="route()">Guest</div>
+
+    <div><img src="./assets/images/login.png" /></div>
 
   </div>
 
