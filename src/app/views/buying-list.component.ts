@@ -178,6 +178,17 @@ export class BuyingListComponent implements AfterViewInit {
         amount: 0
       })
     })
+
+    if(this.buyingList.length > 0 ){
+
+      this.buyingList.forEach(item => {
+
+        this.items.forEach(dbItem => {
+
+          if(dbItem.name == item.name) dbItem.amount = item.amount
+        })
+      })
+    }
   }
 
   get supermarket() {

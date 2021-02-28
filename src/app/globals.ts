@@ -5,11 +5,11 @@ import { ShoppingItem } from "./views/shopping-item"
 export class Globals {
 
 
-    static supermarket: string = 'Rewe'
+    static supermarket: string
 
-    static threshold: number = 5
+    static threshold: number = 0
 
-    static shoppingList: ShoppingItem[] = [{name: 'bananas', amount: 2}]
+    static shoppingList: ShoppingItem[] = []
 
     static optShoppingList: ShoppingItem[]
 

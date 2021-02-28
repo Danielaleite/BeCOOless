@@ -82,7 +82,6 @@ export class OptimizedListComponent {
 
     toggleOpacity(e) {
 
-      console.log(e.target.getAttribute('checked') == 'true')
       if(e.target.getAttribute('checked') == 'true') {
 
         e.target.style.opacity = '1'

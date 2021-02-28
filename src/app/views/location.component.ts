@@ -77,6 +77,7 @@ export class LocationComponent {
 
   constructor(public router: Router) {
 
+    this.supermarket = Globals.supermarket
   }
 
 

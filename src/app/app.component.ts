@@ -1,5 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Globals } from './globals';
 
 @Component({
   selector: 'app-root',
@@ -18,10 +19,11 @@ export class AppComponent implements AfterViewInit {
 
   constructor(public router: Router) {
 
+    if(Globals.supermarket == null && Globals.shoppingList.length == 0)
+      router.navigateByUrl('location')
   }
 
   ngAfterViewInit() {
-
 
   } 
 

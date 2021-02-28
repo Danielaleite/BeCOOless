@@ -7,13 +7,11 @@ import { Router } from "@angular/router";
    
   <div id="login-wrapper">
 
-    <div style="text-align:center;"><img style="width: 60%;" src="./assets/images/logo.png" /></div>
+    <div style="text-align:center;"><img style="height: 200px;" src="./assets/images/logo.png" /></div>
 
     <div class="btn" (click)="route()">Login</div>
     <div class="btn" (click)="route()">Register</div>
     <div class="btn" (click)="route()">Guest</div>
-
-    <div><img src="./assets/images/login.png" /></div>
 
   </div>
 
@@ -27,10 +25,11 @@ import { Router } from "@angular/router";
         display:flex;
         align-items:center;
         flex-direction: column;
+        text-align:center;
     }
     #login-wrapper img {
 
-        width: 100%;
+        height: 100px;
     }
     #login-wrapper .btn {
 

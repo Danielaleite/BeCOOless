@@ -13,7 +13,7 @@ import { Router } from "@angular/router";
       
     </div>
 
-    <div style="margin-bottom: 40px;">
+    <div>
 
       <h4>Be COOL</h4> 
       
@@ -46,14 +46,12 @@ import { Router } from "@angular/router";
       display: flex;
       justify-content:center;
       align-items:center;
-      width: 100%;
-      max-width: 500px;
-      margin-top: 20%;
-      margin-bottom: 20%;
+      height: 200px;
+      margin-bottom: 20px;
     }
 
     .logo-wrapper img {
-      width:70%;
+      height: 100%;
     }
 
 
