@@ -330,3 +330,5 @@ if __name__ == "__main__":
     assert green_amounts == [[3, 0], [0, 2]]
     assert np.isclose(green_price, 4.5)
     assert np.isclose(green_co2_emission, 33.0)
+
+    print("\nResults correct.")
