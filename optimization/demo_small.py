@@ -122,15 +122,23 @@ def demo(shopping_list, offer, threshold, verbose=False):
     ############################################################################
     #                     Optimal solution in terms of CO₂                     #
     ############################################################################
-    green_amounts, green_price, green_co2_emission = solve_optimal_co2(
-        product_ids,
-        target_amounts,
-        units,
-        prices,
-        co2_emissions,
-        threshold,
-        cheap_price,
-    )
+    try:
+        green_amounts, green_price, green_co2_emission = solve_optimal_co2(
+            product_ids,
+            target_amounts,
+            units,
+            prices,
+            co2_emissions,
+            threshold,
+            cheap_price,
+        )
+    # optimizer did not converge, fall back to cheapest solution
+    except RuntimeError:
+        green_amounts, green_price, green_co2_emission = (
+            cheap_amounts,
+            cheap_price,
+            cheap_co2_emission,
+        )
 
     if verbose:
         print_solution(
