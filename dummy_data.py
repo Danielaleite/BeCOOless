@@ -132,7 +132,27 @@ def minimize(objective, constraints):
     return problem.value
 
 
+def group_by_categories(product_ids, flat_vector):
+    """Recover the category substructure of a flat vector."""
+    transformed_vector = []
+
+    num_products_in_category = [len(ids) for ids in product_ids]
+
+    start = 0
+    for num_products in num_products_in_category:
+        end = start + num_products
+        transformed_vector.append(flat_vector[start:end].tolist())
+        start = end
+
+    return transformed_vector
+
+
 def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emissions):
+    """Realize shopping list at lowest price.
+
+    Returns the found solution (amounts to purchase from each product), its price, and
+    its CO2 emission.
+    """
     num_variables = sum(len(products) for products in product_ids)
 
     amounts = cp.Variable(num_variables, integer=True)
@@ -156,25 +176,19 @@ def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emission
     # solve optimization
     solution_price = minimize(cost_price, constraints)
     solution_amounts = np.round(amounts.value).astype(np.int32)
-
-    # evaluate CO2 cost
     solution_CO2_emissions = compute_cost(solution_amounts, CO2_emissions)
 
-    solution_transformed = []
-    start = 0
+    solution_amounts = group_by_categories(product_ids, solution_amounts)
 
-    for products in product_ids:
-        num_products = len(products)
-        solution_transformed.append(
-            solution_amounts[start : start + num_products].tolist()
-        )
-        start += num_products
+    return solution_amounts, solution_price, solution_CO2_emissions
 
-    print("Optimal amounts found by solver:", solution_transformed)
-    print("Optimal cost value found by solver:", solution_amounts)
-    print("CO2 cost:", solution_CO2_emissions)
 
-    return solution_transformed, solution_price, solution_CO2_emissions
+def print_solution(amounts, price, CO2_emission, description=""):
+    """Print solution properties to command line."""
+    print(f"Solution: {description}")
+    print("\tamounts:       ", amounts)
+    print("\tprice:         ", price)
+    print("\tCO2 emissions: ", CO2_emission)
 
 
 def solve_optimal_CO2(
@@ -184,7 +198,7 @@ def solve_optimal_CO2(
     prices,
     CO2_emissions,
     user_threshold,
-    cost_cheapest,
+    cheap_price,
 ):
     num_variables = sum(len(products) for products in product_ids)
     amounts = cp.Variable(num_variables, integer=True)
@@ -204,31 +218,19 @@ def solve_optimal_CO2(
 
     # must be lower than threshold-ed cost
     cost_price = compute_cost(amounts, prices)
-    constraints.append(cost_price <= (1 + user_threshold) * cost_cheapest)
+    constraints.append(cost_price <= (1 + user_threshold) * cheap_price)
 
     # set up objective
     cost_CO2_emissions = compute_cost(amounts, CO2_emissions)
 
+    # solve optimization
     solution_CO2_emissions = minimize(cost_CO2_emissions, constraints)
     solution_amounts = np.round(amounts.value).astype(np.int32)
-
     solution_price = compute_cost(solution_amounts, prices)
 
-    solution_transformed = []
-    start = 0
+    solution_amounts = group_by_categories(product_ids, solution_amounts)
 
-    for products in product_ids:
-        num_products = len(products)
-        solution_transformed.append(
-            solution_amounts[start : start + num_products].tolist()
-        )
-        start += num_products
-
-    print("CO2-optimal amounts found by solver:", solution_transformed)
-    print("CO2-optimal cost of shopping list:", solution_price)
-    print("CO2-optimal cost value found by solver:", solution_CO2_emissions)
-
-    return solution_transformed, solution_price, solution_CO2_emissions
+    return solution_amounts, solution_price, solution_CO2_emissions
 
 
 def demo():
@@ -259,24 +261,42 @@ def demo():
     print("Prices:", prices)
     print("CO2:", CO2_emissions)
 
+    print("\n")
+
+    print("Shopping list :", dummy_shopping_list)
+    print("Products      :", product_ids)
+
+    print("\n")
     ############################################################################
     #                    Optimal solution in terms of money                    #
     ############################################################################
-    cheapest_amounts, cost_cheapest, cheapest_CO2_emission = solve_optimal_price(
+    cheap_amounts, cheap_price, cheap_CO2_emission = solve_optimal_price(
         product_ids, target_amounts, units, prices, CO2_emissions
+    )
+    print_solution(
+        cheap_amounts,
+        cheap_price,
+        cheap_CO2_emission,
+        description="(optimal price)",
     )
 
     ############################################################################
     #                     Optimal solution in terms of CO2                     #
     ############################################################################
-    CO2_amounts, cost_CO2_emissions, CO2_emission = solve_optimal_CO2(
+    green_amounts, green_price, green_CO2_emission = solve_optimal_CO2(
         product_ids,
         target_amounts,
         units,
         prices,
         CO2_emissions,
         dummy_user_threshold,
-        cost_cheapest,
+        cheap_price,
+    )
+    print_solution(
+        green_amounts,
+        green_price,
+        green_CO2_emission,
+        description=f"(CO2-optimized with threshold {dummy_user_threshold})",
     )
 
 
