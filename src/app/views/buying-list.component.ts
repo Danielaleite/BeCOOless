@@ -24,9 +24,11 @@ import { Router } from '@angular/router';
     <div id="buying-list-wrapper">
 
       <ul>
-
-        <li *ngFor="let item of buyingList">{{ item.name }}</li>
-
+        <li *ngFor="let item of buyingList">
+            
+          <div>{{ item.item.name }}</div>
+          <div>{{ item.amount }}</div>
+        </li>
       </ul>
 
     </div>

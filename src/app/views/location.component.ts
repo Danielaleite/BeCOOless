@@ -21,29 +21,19 @@ import { Router } from '@angular/router';
       </mat-autocomplete>
     </mat-form-field>
 
-    <div>
-      <button mat-raised-button color="primary" (click)="route()">Ready</button>
-    </div>
+    <div class="btn bottom" (click)="route()">Continue</div>
   `,
 })
 export class LocationComponent {
 
   public barFormControl = new FormControl()
-  public buyingList: BuyingItem[] = []
-    
-  public items: BuyingItem[] = [
-    {
-      name: 'A',
-      category: 'AA',
-      price: 10,
-      co2: 5
-    },
-    {
-      name: 'B',
-      category: 'BB',
-      price: 15,
-      co2: 55
-    },
+  public supermarket: string    
+  public supermarkets: string[] = [ 
+    "Rewe Mohlstraße",
+    "Rewe Südstadt",
+    "Edeka",
+    "Kaufland",
+    "Alnatura"
   ]
   
   filteredOptions: Observable<BuyingItem[]>;
@@ -59,7 +49,7 @@ export class LocationComponent {
       .pipe(
         startWith(''),
         map(value => typeof value === 'string' ? value : value.name),
-        map(name => name ? this._filter(name) : this.items.slice())
+        map(name => name ? this._filter(name) : this.supermarket.slice())
       );
   }
 
