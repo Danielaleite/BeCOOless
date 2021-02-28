@@ -1,0 +1,25 @@
+Location,Category,Product Name,Price,Unit,CO2
+Rewe,apples,conventional apple,1.0,1KG,5.0
+Rewe,apples,bio apple,2.0,1KG,4.0
+Rewe,bananas,conventional banana,0.5,1KG,10.0
+Rewe,bananas,bio banana,0.75,1KG,9.0
+Rewe,beef,beef,2.99,1KG,29.0
+Rewe,beef,beef south america,3.99,1KG,41.0
+Rewe,pork,pork,3.99,1KG,6.0
+Rewe,pork,pork imported,3.7,1KG,6.5
+Rewe,chicken,bio chicken,3.99,1KG,2.8
+Rewe,chicken,chicken,2.99,1KG,3.7
+Rewe,eggs,eggs,1.49,1KG,2.0
+Rewe,eggs,bio eggs,2.19,1KG,1.5
+Rewe,carrot,carrot,1.49,1KG,0.08
+Rewe,lettuce,lettuce,0.99,1KG,1.05
+Rewe,lettuce,bio lettuce,1.79,1KG,0.26
+Rewe,lettuce,open field lettuce,1.99,1KG,0.14
+Rewe,melon,melon,2.99,1KG,1.0
+Rewe,melon,bio melon,3.99,1KG,0.3
+Rewe,oranges,oranges,1.99,1KG,0.35
+Rewe,oranges,bio oranges,2.49,1KG,0.25
+Rewe,pepper,pepper,1.99,1KG,0.48
+Rewe,potatoes,potatoes,1.49,1KG,0.35
+Rewe,potatoes,bio potatoes,1.99,1KG,0.18
+Rewe,potatoes,local potatoes,2.25,1KG,0.12
