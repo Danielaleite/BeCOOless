@@ -107,6 +107,20 @@ def constrain_elements_non_negative(variables):
     return [var >= 0 for var in variables]
 
 
+def constrain_match_shopping_list(category_count, target_amounts, amounts, units):
+    """Return list of constrains such that chosen amounts fulfill the shopping order."""
+    constraints = []
+
+    start = 0
+
+    for target, num_products in zip(target_amounts, category_count):
+        end = start + num_products
+        constraints.append(amounts[start:end] @ units[start:end] == target)
+        start = end
+
+    return constraints
+
+
 def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emissions):
     num_variables = sum(len(products) for products in product_ids)
 
@@ -115,20 +129,17 @@ def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emission
     # constraints
     constraints = []
 
+    # non-negative amounts
     constraints += constrain_elements_non_negative(amounts)
 
     units_flat = np.array(sum(units, []))
 
     # must fulfill shopping list
-    start = 0
-    for category_idx, products in enumerate(product_ids):
-        num_products = len(products)
-        constraints.append(
-            amounts[start : start + num_products]
-            @ units_flat[start : start + num_products]
-            == target_amounts[category_idx]
-        )
-        start += num_products
+    category_count = [len(products) for products in product_ids]
+
+    constraints += constrain_match_shopping_list(
+        category_count, target_amounts, amounts, units_flat
+    )
 
     prices_flat = np.array(sum(prices, []))
     cost = prices_flat @ amounts
@@ -172,21 +183,17 @@ def solve_optimal_CO2(
     # constraints
     constraints = []
 
-    # non-positive product counts
+    # non-negative amounts
     constraints += constrain_elements_non_negative(amounts)
 
     units_flat = np.array(sum(units, []))
 
     # must fulfill shopping list
-    start = 0
-    for category_idx, products in enumerate(product_ids):
-        num_products = len(products)
-        constraints.append(
-            amounts[start : start + num_products]
-            @ units_flat[start : start + num_products]
-            == target_amounts[category_idx]
-        )
-        start += num_products
+    category_count = [len(products) for products in product_ids]
+
+    constraints += constrain_match_shopping_list(
+        category_count, target_amounts, amounts, units_flat
+    )
 
     # must be lower than threshold-ed cost
     prices_flat = np.array(sum(prices, []))
