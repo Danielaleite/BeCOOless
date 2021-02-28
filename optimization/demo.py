@@ -1,6 +1,5 @@
 """Dummy data set to demo the tool's usefulness."""
 
-import cvxpy as cp
 import numpy as np
 
 from core import solve_optimal_co2, solve_optimal_price
