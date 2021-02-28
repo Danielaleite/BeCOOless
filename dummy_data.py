@@ -5,46 +5,9 @@ import pprint
 import cvxpy as cp
 import numpy as np
 
-dummy_shopping_list = [
-    ("apples", 3),
-    ("bananas", 2),
-]
-
-# user allows 5% more budget to optimize for CO2
-dummy_user_threshold = 0.25
-
-dummy_offer = {
-    "conventional apple": {
-        "category": "apples",
-        "unit": 1,
-        "price": 1.0,
-        "CO2": 5.0,
-    },
-    "bio apple": {
-        "category": "apples",
-        "unit": 1,
-        "price": 2.0,
-        "CO2": 4.0,
-    },
-    "conventional banana": {
-        "category": "bananas",
-        "unit": 1,
-        "price": 0.5,
-        "CO2": 10.0,
-    },
-    "bio banana": {
-        "category": "bananas",
-        "unit": 1,
-        "price": 0.75,
-        "CO2": 9.0,
-    },
-    "bio orange": {
-        "category": "oranges",
-        "unit": 1,
-        "price": 1.5,
-        "CO2": 15,
-    },
-}
+###############################################################################
+#                         Data pre-processing utilities                       #
+###############################################################################
 
 
 def extract_categories_and_amounts(shopping_list):
@@ -76,6 +39,7 @@ def create_pool(categories, offer):
 
 
 def extract_optimization_input(categories, pool):
+    """Flatten the search space's relevant quantities into vectors."""
     product_ids = []
     units = []
     prices = []
@@ -98,6 +62,11 @@ def extract_optimization_input(categories, pool):
     CO2_emissions = np.array(CO2_emissions)
 
     return product_ids, units, prices, CO2_emissions
+
+
+###############################################################################
+#                            Optimization utilities                           #
+###############################################################################
 
 
 def constrain_elements_non_negative(variables):
@@ -233,40 +202,36 @@ def solve_optimal_CO2(
     return solution_amounts, solution_price, solution_CO2_emissions
 
 
-def demo():
+def demo(shopping_list, offer, threshold):
     """Run a demo."""
+
     ############################################################################
     #                         Prepare input to optimizer                       #
     ############################################################################
-    target_categories, target_amounts = extract_categories_and_amounts(
-        dummy_shopping_list
-    )
-    print(f"User wants to buy:")
-    for category, amount in zip(target_categories, target_amounts):
-        print(f"\t{category}: {amount}")
+    target_categories, target_amounts = extract_categories_and_amounts(shopping_list)
 
     # build pools of products to search over
-    pool = create_pool(target_categories, dummy_offer)
-    print("Search space:\n", pprint.pformat(pool))
+    pool = create_pool(target_categories, offer)
 
     # pull out the attributes category-wise for optimization
     product_ids, units, prices, CO2_emissions = extract_optimization_input(
         target_categories, pool
     )
 
-    print("Target categories:", target_categories)
-    print("Target amounts:", target_amounts)
-    print("Products:", product_ids)
-    print("Units:", units)
-    print("Prices:", prices)
-    print("CO2:", CO2_emissions)
+    print("Optimization-relevant information:")
+    print("\tTarget categories: ", target_categories)
+    print("\tTarget amounts:    ", target_amounts)
+    print("\tSearch space:      ", product_ids)
+    print("\tUnits per amount:  ", units)
+    print("\tPrices:            ", prices)
+    print("\tCO2 emissions:     ", CO2_emissions)
 
-    print("\n")
+    print("")
 
-    print("Shopping list :", dummy_shopping_list)
+    print("Shopping list :", shopping_list)
     print("Products      :", product_ids)
 
-    print("\n")
+    print("")
     ############################################################################
     #                    Optimal solution in terms of money                    #
     ############################################################################
@@ -279,6 +244,7 @@ def demo():
         cheap_CO2_emission,
         description="(optimal price)",
     )
+    print("")
 
     ############################################################################
     #                     Optimal solution in terms of CO2                     #
@@ -289,16 +255,75 @@ def demo():
         units,
         prices,
         CO2_emissions,
-        dummy_user_threshold,
+        threshold,
         cheap_price,
     )
     print_solution(
         green_amounts,
         green_price,
         green_CO2_emission,
-        description=f"(CO2-optimized with threshold {dummy_user_threshold})",
+        description=f"(CO2-optimized with threshold {threshold})",
+    )
+
+    return (
+        (cheap_amounts, cheap_price, cheap_CO2_emission),
+        (green_amounts, green_price, green_CO2_emission),
     )
 
 
 if __name__ == "__main__":
-    demo()
+
+    dummy_shopping_list = [
+        ("apples", 3),
+        ("bananas", 2),
+    ]
+
+    # user allows 5% more budget to optimize for CO2
+    dummy_threshold = 0.25
+
+    dummy_offer = {
+        "conventional apple": {
+            "category": "apples",
+            "unit": 1,
+            "price": 1.0,
+            "CO2": 5.0,
+        },
+        "bio apple": {
+            "category": "apples",
+            "unit": 1,
+            "price": 2.0,
+            "CO2": 4.0,
+        },
+        "conventional banana": {
+            "category": "bananas",
+            "unit": 1,
+            "price": 0.5,
+            "CO2": 10.0,
+        },
+        "bio banana": {
+            "category": "bananas",
+            "unit": 1,
+            "price": 0.75,
+            "CO2": 9.0,
+        },
+        "bio orange": {
+            "category": "oranges",
+            "unit": 1,
+            "price": 1.5,
+            "CO2": 15,
+        },
+    }
+
+    (
+        (cheap_amounts, cheap_price, cheap_CO2_emission),
+        (green_amounts, green_price, green_CO2_emission),
+    ) = demo(dummy_shopping_list, dummy_offer, dummy_threshold)
+
+    # verify correctness
+    assert cheap_amounts == [[3, 0], [2, 0]]
+    assert np.isclose(cheap_price, 4.0)
+    assert np.isclose(cheap_CO2_emission, 35.0)
+
+    assert green_amounts == [[3, 0], [0, 2]]
+    assert np.isclose(green_price, 4.5)
+    assert np.isclose(green_CO2_emission, 33.0)
