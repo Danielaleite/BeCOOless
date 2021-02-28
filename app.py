@@ -13,7 +13,7 @@ from src.utils import *
 
 
 CONTACT = "If you continue to encounter this issue, please contact us at " \
-          "sakshamconsul@gmail.com."
+          "support_team@becool.com."
 TIMEOUT_SECONDS = 28
 
 # Extend recursion limit
@@ -128,14 +128,14 @@ class PostResource(RESTResource):
                     except:
                         status = "There was an issue with the API input " \
                                  "(reading parameters) Please contact " \
-                                 "us at sakshamconsul@gmail.com."
+                                 "us at support_team@becool.com."
                         store_log(db.request_log, log_dict, status=status)
                         cherrypy.response.status = 403
                         return json.dumps(status)
 
                 else:  # Different module, not yet implemented
                     status = "The module you wanteed to access hasn't been implemented yet. Please contact " \
-                             "us at sakshamconsul@gmail.com."
+                             "us at support_team@becool.com."
                     store_log(db.request_log, log_dict, status=status)
                     cherrypy.response.status = 403
                     return json.dumps(status)
@@ -145,7 +145,7 @@ class PostResource(RESTResource):
                 except:
                     status = "There was an issue with the API input " \
                              "(rounding parameter). Please contact us at " \
-                             "sakshamconsul@gmail.com"
+                             "support_team@becool.com"
                     store_log(db.request_log, log_dict, status=status)
                     cherrypy.response.status = 403
                     return json.dumps(status)
@@ -171,7 +171,7 @@ class PostResource(RESTResource):
                 except:
                     status = "No Location Field in Body!" \
                              "Please contact us at " \
-                             "sakshamconsul@gmail.com"
+                             "support_team@becool.com"
                     store_log(db.request_log, log_dict, status=status)
                     cherrypy.response.status = 403
                     return json.dumps(status)
@@ -281,7 +281,7 @@ class PostResource(RESTResource):
 
                     else:
                         status = "API method (in Prototype module) does not exist. Please contact us " \
-                                 "at sakshamconsul@gmail.com."
+                                 "at support_team@becool.com."
                         store_log(db.request_log, log_dict, status=status)
                         cherrypy.response.status = 403
                         return json.dumps(status)
@@ -345,7 +345,7 @@ class PostResource(RESTResource):
 
                 else:
                     status = "API Method not implemented. Please contact us " \
-                             "at sakshamconsul@gmail.com."
+                             "at support_team@becool.com."
                     store_log(db.request_log, log_dict, status=status)
 
                     cherrypy.response.status = 405
@@ -399,11 +399,6 @@ def update(db):
         }, {"$set": {"Price": item["Price"]}})
     return 0
 if __name__ == '__main__':
-    uri = "mongodb://climatechangers:climatechangers@127.0.0.1/climatechangers"
-    client = MongoClient(uri)
-    db = client["climatechangers"]
-    collection = db["climatechangers"]
-
     uri = "mongodb+srv://cool_usr:cool_pwd@becoolcluster.xv0y0.mongodb.net/BeCool"
     client = MongoClient(uri)
     # Creating database if it does not exist
