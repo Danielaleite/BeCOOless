@@ -43,7 +43,7 @@ def extract_optimization_input(categories, pool):
     product_ids = []
     units = []
     prices = []
-    CO2_emissions = []
+    co2_emissions = []
 
     for category in categories:
         category_product_ids = []
@@ -53,15 +53,15 @@ def extract_optimization_input(categories, pool):
             category_product_ids.append(product_id)
             units.append(product_info["unit"])
             prices.append(product_info["price"])
-            CO2_emissions.append(product_info["CO2"])
+            co2_emissions.append(product_info["co2"])
 
         product_ids.append(category_product_ids)
 
     units = np.array(units)
     prices = np.array(prices)
-    CO2_emissions = np.array(CO2_emissions)
+    co2_emissions = np.array(co2_emissions)
 
-    return product_ids, units, prices, CO2_emissions
+    return product_ids, units, prices, co2_emissions
 
 
 ###############################################################################
@@ -116,17 +116,16 @@ def group_by_categories(product_ids, flat_vector):
     return transformed_vector
 
 
-def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emissions):
+def solve_optimal_price(product_ids, target_amounts, units, prices, co2_emissions):
     """Realize shopping list at lowest price.
 
     Returns the found solution (amounts to purchase from each product), its price, and
-    its CO2 emission.
+    its co2 emission.
     """
     num_variables = sum(len(products) for products in product_ids)
 
     amounts = cp.Variable(num_variables, integer=True)
 
-    # constraints
     constraints = []
 
     # non-negative amounts
@@ -139,33 +138,33 @@ def solve_optimal_price(product_ids, target_amounts, units, prices, CO2_emission
         category_count, target_amounts, amounts, units
     )
 
-    # set up objective
+    # objective
     cost_price = compute_cost(amounts, prices)
 
     # solve optimization
     solution_price = minimize(cost_price, constraints)
     solution_amounts = np.round(amounts.value).astype(np.int32)
-    solution_CO2_emissions = compute_cost(solution_amounts, CO2_emissions)
+    solution_co2_emissions = compute_cost(solution_amounts, co2_emissions)
 
     solution_amounts = group_by_categories(product_ids, solution_amounts)
 
-    return solution_amounts, solution_price, solution_CO2_emissions
+    return solution_amounts, solution_price, solution_co2_emissions
 
 
-def print_solution(amounts, price, CO2_emission, description=""):
+def print_solution(amounts, price, co2_emission, description=""):
     """Print solution properties to command line."""
     print(f"Solution: {description}")
     print("\tamounts:       ", amounts)
     print("\tprice:         ", price)
-    print("\tCO2 emissions: ", CO2_emission)
+    print("\tCO₂ emissions: ", co2_emission)
 
 
-def solve_optimal_CO2(
+def solve_optimal_co2(
     product_ids,
     target_amounts,
     units,
     prices,
-    CO2_emissions,
+    co2_emissions,
     user_threshold,
     cheap_price,
 ):
@@ -189,17 +188,17 @@ def solve_optimal_CO2(
     cost_price = compute_cost(amounts, prices)
     constraints.append(cost_price <= (1 + user_threshold) * cheap_price)
 
-    # set up objective
-    cost_CO2_emissions = compute_cost(amounts, CO2_emissions)
+    # objective
+    cost_co2_emissions = compute_cost(amounts, co2_emissions)
 
     # solve optimization
-    solution_CO2_emissions = minimize(cost_CO2_emissions, constraints)
+    solution_co2_emissions = minimize(cost_co2_emissions, constraints)
     solution_amounts = np.round(amounts.value).astype(np.int32)
     solution_price = compute_cost(solution_amounts, prices)
 
     solution_amounts = group_by_categories(product_ids, solution_amounts)
 
-    return solution_amounts, solution_price, solution_CO2_emissions
+    return solution_amounts, solution_price, solution_co2_emissions
 
 
 def demo(shopping_list, offer, threshold, verbose=False):
@@ -214,7 +213,7 @@ def demo(shopping_list, offer, threshold, verbose=False):
     pool = create_pool(target_categories, offer)
 
     # pull out the attributes category-wise for optimization
-    product_ids, units, prices, CO2_emissions = extract_optimization_input(
+    product_ids, units, prices, co2_emissions = extract_optimization_input(
         target_categories, pool
     )
 
@@ -225,7 +224,7 @@ def demo(shopping_list, offer, threshold, verbose=False):
         print("\tSearch space:      ", product_ids)
         print("\tUnits per amount:  ", units)
         print("\tPrices:            ", prices)
-        print("\tCO2 emissions:     ", CO2_emissions)
+        print("\tCO₂ emissions:     ", co2_emissions)
 
         print("")
 
@@ -237,28 +236,28 @@ def demo(shopping_list, offer, threshold, verbose=False):
     ############################################################################
     #                    Optimal solution in terms of money                    #
     ############################################################################
-    cheap_amounts, cheap_price, cheap_CO2_emission = solve_optimal_price(
-        product_ids, target_amounts, units, prices, CO2_emissions
+    cheap_amounts, cheap_price, cheap_co2_emission = solve_optimal_price(
+        product_ids, target_amounts, units, prices, co2_emissions
     )
 
     if verbose:
         print_solution(
             cheap_amounts,
             cheap_price,
-            cheap_CO2_emission,
+            cheap_co2_emission,
             description="(optimal price)",
         )
         print("")
 
     ############################################################################
-    #                     Optimal solution in terms of CO2                     #
+    #                     Optimal solution in terms of CO₂                     #
     ############################################################################
-    green_amounts, green_price, green_CO2_emission = solve_optimal_CO2(
+    green_amounts, green_price, green_co2_emission = solve_optimal_co2(
         product_ids,
         target_amounts,
         units,
         prices,
-        CO2_emissions,
+        co2_emissions,
         threshold,
         cheap_price,
     )
@@ -267,13 +266,13 @@ def demo(shopping_list, offer, threshold, verbose=False):
         print_solution(
             green_amounts,
             green_price,
-            green_CO2_emission,
-            description=f"(CO2-optimized with threshold {threshold})",
+            green_co2_emission,
+            description=f"(CO₂-optimized with threshold {threshold})",
         )
 
     return (
-        (cheap_amounts, cheap_price, cheap_CO2_emission),
-        (green_amounts, green_price, green_CO2_emission),
+        (cheap_amounts, cheap_price, cheap_co2_emission),
+        (green_amounts, green_price, green_co2_emission),
     )
 
 
@@ -284,7 +283,7 @@ if __name__ == "__main__":
         ("bananas", 2),
     ]
 
-    # user allows 5% more budget to optimize for CO2
+    # user allows 25% more budget to optimize for CO₂
     dummy_threshold = 0.25
 
     dummy_offer = {
@@ -292,44 +291,44 @@ if __name__ == "__main__":
             "category": "apples",
             "unit": 1,
             "price": 1.0,
-            "CO2": 5.0,
+            "co2": 5.0,
         },
         "bio apple": {
             "category": "apples",
             "unit": 1,
             "price": 2.0,
-            "CO2": 4.0,
+            "co2": 4.0,
         },
         "conventional banana": {
             "category": "bananas",
             "unit": 1,
             "price": 0.5,
-            "CO2": 10.0,
+            "co2": 10.0,
         },
         "bio banana": {
             "category": "bananas",
             "unit": 1,
             "price": 0.75,
-            "CO2": 9.0,
+            "co2": 9.0,
         },
         "bio orange": {
             "category": "oranges",
             "unit": 1,
             "price": 1.5,
-            "CO2": 15,
+            "co2": 15,
         },
     }
 
     (
-        (cheap_amounts, cheap_price, cheap_CO2_emission),
-        (green_amounts, green_price, green_CO2_emission),
+        (cheap_amounts, cheap_price, cheap_co2_emission),
+        (green_amounts, green_price, green_co2_emission),
     ) = demo(dummy_shopping_list, dummy_offer, dummy_threshold, verbose=True)
 
     # verify correctness
     assert cheap_amounts == [[3, 0], [2, 0]]
     assert np.isclose(cheap_price, 4.0)
-    assert np.isclose(cheap_CO2_emission, 35.0)
+    assert np.isclose(cheap_co2_emission, 35.0)
 
     assert green_amounts == [[3, 0], [0, 2]]
     assert np.isclose(green_price, 4.5)
-    assert np.isclose(green_CO2_emission, 33.0)
+    assert np.isclose(green_co2_emission, 33.0)
