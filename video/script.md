@@ -46,5 +46,11 @@ much more you are willing to pay to be COOL. Using our state of the art
 optimization algorithm, users can see how spending an extra euro on the right
 alternative might lead to a tremendous decrease in CO2 emission.
 
+(Business plan)
+Freemium: a business model that offers free and premium packages. Basic services are
+offered for free, and customers are able to upgrade to premium packages for more services.
+
+Advertising, we will publish some free content. Advertisers pay to get in front of the app users.
+
 (Conclusion)
-Our app helps become COOL
+Who wants to contribute to the world? Our app helps become COOL.
