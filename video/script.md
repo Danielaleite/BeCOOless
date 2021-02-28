@@ -9,37 +9,39 @@ This famous phenomenon, known as the butterfly effect, may be essential for
  tackling climate change, which undoubtedly will be one of the hardest
  challenges we and future generations will be facing: It is about taking action;
  even the smallest steps can help; and it is our goal to make it easy for
- everyone start walking.
+ everyone to start 'walking'.
 
 (Introduction)
 
-Hi, we are Team COOL, a group of students from Europe. (Missing bridge, mention
-our interests and intrinsic motivation). As a group with members stemming from
-three continents and having grown up in societies that could probably not be
-more different, we understand that taking action against climate change can be
-challenging for many individuals. Not everyone shares our privileges. We intend
-to enable individuals to bring the battle against climate change to one’s
-backyard, one small action at a time.
+Hi, we are the BeCOOL team, a group of students from Europe whose members have
+grown up on three different continents and societies that could hardly be more
+different. Hence, we understand that taking action against climate change is a
+highly individual and challenging task for individuals. We intend to enable
+anyone to fight climate change, one small action at a time.
 
 (Data - problem)
 
 Going green is often associated with great sacrifice or a Bourgeoisie lifestyle.
 Human emissions of carbon dioxide and other greenhouse gases – are a primary
-driver of climate change – and present one of the world’s most pressing
-challenges. The math is simple: Fewer carbon dioxide released into the
-atmosphere means less global warming. Our daily lives influence the emission of
-carbon dioxide.
+driver of climate change. The math is simple: Fewer carbon dioxide released into
+the atmosphere means less global warming. Our daily lives heavily influence this
+emission.
 
-Take shopping as an example. (There should be results from our poll here
-suggesting ) Shopping contributes to 40% of an individual carbon footprint.
+Take shopping as an example. We all do it, but who has the dedication, and time,
+to set up a shopping list which combines all our goals of a healthy,
+environmentally friendly, yet affordable diet. In a small poll, we found that 9
+out of 10 participants would like to buy greener products at a small additional
+cost. roughly every second participant would even be willing to spend 5% or more
+in the supermarket for greener products.
 
 (Storytelling)
 
-Now meet Mike. Mike is a young individual living independently. Mike likes to
-live sustainably while living on a budget. Confused with the plethora of options
-available, Mike currently buys solely based on the costs. Here comes BeCOOL. A
-user-friendly app that allows Mike to choose greener alternatives while
-respecting his budget.
+Now meet Mike. He is a young individual who seeks to live sustainably while
+staying on a budget. Mike is overwhelmed by the plethora of available options at
+the supermarket. How should he choose? Sometimes, he simply buys the cheapest
+option, but he would not mind paying a bit more if he knew the product was much
+greener. This is where BeCOOL, the app we've developed, comes in. BeCOOL helps
+Mike to choose greener alternatives while respecting his budget.
 
 (Platform presentation)
 
@@ -52,11 +54,12 @@ a tremendous decrease in CO2 emission.
 
 (Business plan)
 
-Freemium: a business model that offers free and premium packages. Basic services
-are offered for free, and customers are able to upgrade to premium packages for
-more services. Advertising, we will publish some free content. Advertisers pay
-to get in front of the app users.
+The basic app is free to use, but you can unlock even more powerful options to
+design a shopping list that fits your lifestyle choices for a small monthly fee,
+and get rid of the ads, too.
 
 (Conclusion)
 
-Who wants to contribute to the world? Our app helps become COOL.
+Every step counts. We can all contribute. It's the joint effort that matters.
+
+What are you waiting for? Try out the app and BeCOOL at your local store.
