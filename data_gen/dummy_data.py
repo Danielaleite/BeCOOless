@@ -65,4 +65,4 @@ if __name__ == '__main__':
         unit = str(unit) + 'KG'
         carbon = offer[prod]["CO2"]
         df.loc[i] = [loc, cat, prod, price, unit, carbon]
-    df.to_csv(os.getcwd() + '/data_gen/StockIn  fo.csv', index=False)
+    df.to_csv(os.getcwd() + '/data_gen/StockInfo.csv', index=False)
