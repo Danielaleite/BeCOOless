@@ -211,6 +211,10 @@ def solve_optimal_co2(
     cost_co2_emissions = compute_cost(amounts, co2_emissions)
 
     solution_co2_emissions = minimize(cost_co2_emissions, constraints)
+
+    if amounts.value is None:
+        raise RuntimeError("Optimizer did not converge")
+
     solution_amounts = np.round(amounts.value).astype(np.int32)
     solution_price = compute_cost(solution_amounts, prices)
     solution_amounts = group_by_categories(product_ids, solution_amounts)
