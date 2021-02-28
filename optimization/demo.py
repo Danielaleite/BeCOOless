@@ -3,7 +3,7 @@
 import cvxpy as cp
 import numpy as np
 
-from core import print_solution, solve_optimal_co2, solve_optimal_price
+from core import solve_optimal_co2, solve_optimal_price
 
 ###############################################################################
 #                         Data pre-processing utilities                       #
@@ -62,6 +62,14 @@ def extract_optimization_input(categories, pool):
     co2_emissions = np.array(co2_emissions)
 
     return product_ids, units, prices, co2_emissions
+
+
+def print_solution(amounts, price, co2_emission, description=""):
+    """Print solution properties to command line."""
+    print(f"Solution: {description}")
+    print("\tamounts:       ", amounts)
+    print("\tprice:         ", price)
+    print("\tCO₂ emissions: ", co2_emission)
 
 
 def demo(shopping_list, offer, threshold, verbose=False):
