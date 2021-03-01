@@ -433,7 +433,8 @@ if __name__ == '__main__':
         '/':       {
             # 'tools.sessions.on': True,
             'tools.response_headers.on':      True,
-            'tools.response_headers.headers': [('Content-Type', 'text/plain')]},
+            'tools.response_headers.headers': [('Content-Type', 'text/plain'),
+                                               ('Access-Control-Allow-Origin', 'https://danielaleite.github.io')]},
         '/static': {
             'tools.staticdir.on':    True,
             'cors.expose.on': True,
@@ -443,7 +444,7 @@ if __name__ == '__main__':
         }
     }
 
-    cherrypy.config.update({'server.socket_host': '0.0.0.0',})
+    cherrypy.config.update({'server.socket_host': '0.0.0.0'})
     cherrypy.config.update(
         {'server.socket_port': int(os.environ.get('PORT', '8080'))})
     cherrypy.quickstart(Root(), '/', conf)
