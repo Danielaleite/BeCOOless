@@ -72,6 +72,7 @@ class RESTResource(object):
 
 class PostResource(RESTResource):
 
+    @cherrypy.expose
     @cherrypy.tools.json_out()
     def handle_POST(self, jsonData, *vpath, **params):
 
