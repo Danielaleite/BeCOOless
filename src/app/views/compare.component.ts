@@ -6,6 +6,8 @@ import { ItemService } from "../provider/item.service";
   selector: "comparison",
   template: `
   
+    <div *ngIf="!optimalPrice || !optimalCO2">loading...</div>
+
     <div *ngIf="optimalPrice && optimalCO2" id="comparison-wrapper">
           
       <div class="col-2">
@@ -171,7 +173,7 @@ export class CompareComponent {
   
   public route(){
 
-    if(Globals.optShoppingList)
+    if(Globals.optShoppingList.length > 0)
       this.router.navigateByUrl('/optimized')
   } 
 }

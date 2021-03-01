@@ -15,13 +15,13 @@ import { Router } from "@angular/router";
 
     <div>
 
-      <h4>Be COOL</h4> 
+      <span>Go green. Be Coo-less</span> 
       
     </div>
     
     <div>
 
-      <span>Go green. Be COO-Less</span> 
+      <span>Small changes. Big impacts</span> 
       
     </div>
     
