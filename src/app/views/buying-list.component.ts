@@ -98,11 +98,11 @@ import { DB } from '../data';
         position: relative;
         display: inline-block;
         width: 50%;
-        height: 200px;
         box-sizing:border-box;
         padding: 2.5%;
         text-align:center;
         cursor:pointer;
+        margin-bottom: 20px;
       }
       #buying-list-wrapper ul li img {
         width: 100%;
@@ -111,7 +111,7 @@ import { DB } from '../data';
       #buying-list-wrapper ul li .item-bar {
     
         position:absolute;
-        bottom: 0px;
+        bottom: -30px;
         display: flex;
         justify-content:center;
         width: 90%;
