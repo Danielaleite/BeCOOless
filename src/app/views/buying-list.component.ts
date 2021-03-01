@@ -172,10 +172,10 @@ export class BuyingListComponent implements AfterViewInit {
 
   constructor(public router: Router, public itemService: ItemService) {
 
-    if(Globals.supermarket == null) {
-      router.navigateByUrl('/location')
-      return
-    }
+    // if(Globals.supermarket == null) {
+    //   router.navigateByUrl('/location')
+    //   return
+    // }
 
     DB.forEach(data => {
       this.items.push({
