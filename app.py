@@ -355,6 +355,9 @@ class PostResource(RESTResource):
 
                         else:
                             # Return scheduled tasks
+                            print(f'Final List')
+                            for f_item in final_shopping_list:
+                                print(f_item)
                             return json.dumps(final_shopping_list)
 
                 else:
