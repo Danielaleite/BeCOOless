@@ -37,7 +37,7 @@ import { DB } from '../data';
         <li *ngFor="let item of filteredOptions | async">
             
           <div>{{ item.name }}</div>
-          <div><img src="./assets/images/empty-image.jpg" /></div>
+          <div><img [src]="item.img" /></div>
 
           <div class="item-bar">
             <div class="icon plus" (click)="add($event, item)"><div>+</div></div>

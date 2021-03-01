@@ -1,16 +1,16 @@
 
 
 export const DB = [
-    {name: 'apples', img: ''},
-    {name: 'bananas', img: ''},
-    {name: 'beef', img: ''},
-    {name: 'carrot', img: ''},
-    {name: 'chicken', img: ''},
-    {name: 'eggs', img: ''},
-    {name: 'lettuce', img: ''},
-    {name: 'melon', img: ''},
-    {name: 'oranges', img: ''},
-    {name: 'pepper', img: ''},
-    {name: 'pork', img: ''},
-    {name: 'potatoes', img: ''},
+    {name: 'apples', img: './assets/images/items/Apples.png'},
+    {name: 'bananas', img: './assets/images/items/Bananas.png'},
+    {name: 'beef', img: './assets/images/items/cow.jpg'},
+    {name: 'carrot', img: './assets/images/items/carrots.jpg'},
+    {name: 'chicken', img: './assets/images/items/chicken.jpg'},
+    {name: 'eggs', img: './assets/images/items/Eggs.png'},
+    {name: 'lettuce', img: './assets/images/items/lettuce.jpg'},
+    {name: 'melon', img: './assets/images/items/melon.jpg'},
+    {name: 'oranges', img: './assets/images/items/oranges.jpg'},
+    {name: 'pepper', img: './assets/images/items/pepper.jpg'},
+    {name: 'pork', img: './assets/images/items/pork.jpg'},
+    {name: 'potatoes', img: './assets/images/items/potatoes.jpg'},
 ]
