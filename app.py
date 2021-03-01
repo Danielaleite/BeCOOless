@@ -22,6 +22,7 @@ sys.setrecursionlimit(10000)
 
 
 class RESTResource(object):
+
     """
     Base class for providing a RESTful interface to a resource.
     From https://stackoverflow.com/a/2831479
@@ -37,20 +38,17 @@ class RESTResource(object):
     @cherrypy.expose
     @cherrypy.tools.accept(media='application/json')
     def default(self, *vpath, **params):
+        # print("YO")
+        # print(cherrypy.request.method)
         if cherrypy.request.method == 'OPTIONS':
-            # This is a request that browser sends in CORS prior to sending a real request.
-
-            # Set up extra headers for a pre-flight OPTIONS request.
-            cherrypy_cors.preflight(allowed_methods=['GET', 'POST'])
-            return {'method': 'non-POST'}
-        method = getattr(self, "handle_" + cherrypy.request.method, None)
-        sys.stdout.write('method_out')
-        sys.stdout.write(method)
-
+        #     # This is a request that browser sends in CORS prior to sending a real request.
         #
-        # if cherrypy.request.method == 'POST':
-        #     return {'method': 'POST', 'payload': cherrypy.request.json}
+        #     # Set up extra headers for a pre-flight OPTIONS request.
+            cherrypy_cors.preflight(allowed_methods=['GET', 'POST'])
+            return {"ALLOW:": 'POST'}
 
+
+        method = getattr(self, "handle_" + cherrypy.request.method, None)
         if not method:
             methods = [x.replace("handle_", "") for x in dir(self)
                        if x.startswith("handle_")]
@@ -399,8 +397,6 @@ class Root(object):
         # return "REST API for App Project"
 
 
-
-
 def update(db):
     stock_list = pd.read_csv('./data_gen/StockInfo.csv')
     converted_stock_dict = pd.DataFrame.to_dict(stock_list, orient="records")
@@ -415,6 +411,8 @@ def update(db):
             ]
         }, {"$set": {"Price": item["Price"]}})
     return 0
+
+
 if __name__ == '__main__':
     uri = "mongodb+srv://cool_usr:cool_pwd@becoolcluster.xv0y0.mongodb.net/BeCool"
     client = MongoClient(uri)
@@ -433,13 +431,14 @@ if __name__ == '__main__':
             'tools.response_headers.headers': [('Content-Type', 'text/plain')]},
         '/static': {
             'tools.staticdir.on':    True,
+            'cors.expose.on': True,
             'tools.staticdir.dir':   os.path.join(
                 os.path.dirname(os.path.abspath(__file__)), 'static'),
             'tools.staticdir.index': 'urlgenerator.html'
         }
     }
 
-    cherrypy.config.update({'server.socket_host': '0.0.0.0', 'cors.expose.on': True,})
+    cherrypy.config.update({'server.socket_host': '0.0.0.0',})
     cherrypy.config.update(
         {'server.socket_port': int(os.environ.get('PORT', '8080'))})
     cherrypy.quickstart(Root(), '/', conf)
