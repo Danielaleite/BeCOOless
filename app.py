@@ -3,6 +3,7 @@ import os
 import stopit
 import sys
 import cherrypy
+import cherrypy_cors
 from pymongo import MongoClient
 import time
 import pandas as pd
@@ -408,7 +409,7 @@ if __name__ == '__main__':
 
     # update the Inventory
     update(db)
-
+    cherrypy_cors.install()
     conf = {
         '/':       {
             # 'tools.sessions.on': True,
@@ -422,7 +423,7 @@ if __name__ == '__main__':
         }
     }
 
-    cherrypy.config.update({'server.socket_host': '0.0.0.0'})
-    cherrypy.config.update(
-        {'server.socket_port': int(os.environ.get('PORT', '6789'))})
+    cherrypy.config.update({'server.socket_host': 'becooless.herokuapp.com', 'cors.expose.on': True,})
+    # cherrypy.config.update(
+    #     {'server.socket_port': int(os.environ.get('PORT', '6789'))})
     cherrypy.quickstart(Root(), '/', conf)
