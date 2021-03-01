@@ -45,7 +45,8 @@ class RESTResource(object):
         #
         #     # Set up extra headers for a pre-flight OPTIONS request.
             cherrypy_cors.preflight(allowed_methods=['GET', 'POST'])
-            return {"ALLOW:": 'POST'}
+            return {"ALLOW:": 'POST',
+                    "Access-Control-Allow-Origin:": 'https://danielaleite.github.io'}
 
 
         method = getattr(self, "handle_" + cherrypy.request.method, None)
