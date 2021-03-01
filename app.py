@@ -37,14 +37,16 @@ class RESTResource(object):
     @cherrypy.expose
     @cherrypy.tools.accept(media='application/json')
     def default(self, *vpath, **params):
-        method = getattr(self, "handle_" + cherrypy.request.method, None)
-        sys.stdout.write('method_out')
-        sys.stdout.write(method)
         if cherrypy.request.method == 'OPTIONS':
             # This is a request that browser sends in CORS prior to sending a real request.
 
             # Set up extra headers for a pre-flight OPTIONS request.
             cherrypy_cors.preflight(allowed_methods=['GET', 'POST'])
+            return {'method': 'non-POST'}
+        method = getattr(self, "handle_" + cherrypy.request.method, None)
+        sys.stdout.write('method_out')
+        sys.stdout.write(method)
+
         #
         # if cherrypy.request.method == 'POST':
         #     return {'method': 'POST', 'payload': cherrypy.request.json}
