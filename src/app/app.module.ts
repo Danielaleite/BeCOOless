@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -63,7 +62,7 @@ const routes: Routes = [
     MatFormFieldModule,
     MatInputModule 
   ],
-  providers: [ ItemService, {provide: LocationStrategy, useClass: HashLocationStrategy} ],
+  providers: [ ItemService ],
   
   exports: [
     RouterModule
