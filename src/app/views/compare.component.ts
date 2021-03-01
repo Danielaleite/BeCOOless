@@ -123,6 +123,11 @@ export class CompareComponent {
   public default_threshold: number
 
   constructor(public router: Router, public itemService: ItemService) {
+    
+    if(Globals.supermarket == null || Globals.shoppingList.length == 0) {
+      router.navigateByUrl('/location')
+      return
+    }
 
     Globals.optShoppingList = []
 

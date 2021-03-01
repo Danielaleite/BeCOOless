@@ -172,6 +172,11 @@ export class BuyingListComponent implements AfterViewInit {
 
   constructor(public router: Router, public itemService: ItemService) {
 
+    if(Globals.supermarket == null) {
+      router.navigateByUrl('/location')
+      return
+    }
+
     DB.forEach(data => {
       this.items.push({
         name: data.name[0].toUpperCase() + data.name.substr(1).toLowerCase(),

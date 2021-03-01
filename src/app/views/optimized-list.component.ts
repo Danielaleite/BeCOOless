@@ -74,7 +74,12 @@ export class OptimizedListComponent {
 
     public optList: ShoppingItem[]
 
-    constructor() {
+    constructor(public router: Router) {
+
+      if(Globals.supermarket == null || Globals.shoppingList.length == 0) {
+        router.navigateByUrl('/location')
+        return
+      }
 
         this.optList = Globals.optShoppingList
     }
