@@ -174,8 +174,9 @@ export class BuyingListComponent implements AfterViewInit {
 
     DB.forEach(data => {
       this.items.push({
-        name: data[0].toUpperCase() + data.substr(1).toLowerCase(),
-        amount: 0
+        name: data.name[0].toUpperCase() + data.name.substr(1).toLowerCase(),
+        amount: 0,
+        img: data.img
       })
     })
 

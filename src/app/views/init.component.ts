@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
 
     <div class="logo-wrapper">
 
-      <img src="./assets/images/logo.png"/>
+      <img src="./assets/images/logo.svg"/>
       
     </div>
 

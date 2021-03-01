@@ -161,7 +161,7 @@ export class CompareComponent {
       array.forEach((a, i) => {
         Globals.optShoppingList.push({
           name: a,
-          amount: optCO2[a]
+          amount: optCO2[a],
         })
       })
     })

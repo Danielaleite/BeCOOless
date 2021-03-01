@@ -55,7 +55,7 @@ export class ItemService {
         })
 
         const headers = new HttpHeaders({
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         })
 
         const options = {
