@@ -133,7 +133,7 @@ def delete_sensitive_data(projects):
 
 
 
-def get_final_output(search_space, output, flag,rounding):
+def get_final_output(db, search_space, output, flag,rounding, location):
     """
     Input is list of items
     Outputs list of items for today with fields:
@@ -152,7 +152,16 @@ def get_final_output(search_space, output, flag,rounding):
         for i, category in enumerate(search_space):
             for j, item in enumerate(category):
                 if output["amount"][i][j] > 0:
-                    final_dict[item] = output["amount"][i][j]
+                    cursor = db.stock_table.find({
+                        "$and": [
+                            {"Location": location},
+                            {"Product Name": item}
+                        ]
+                    })
+                    item_db = [c for c in cursor]
+                    final_dict[item] = {"amount": output["amount"][i][j],
+                                        "price": output["amount"][i][j] * item_db["Price"],
+                                        "carbon": output["amount"][i][j] * item_db["CO2"]}
         final_dict["price"] = round(output["price"], int(rounding))
         final_dict["carbon"] = round(output["carbon"], int(rounding))
         return final_dict

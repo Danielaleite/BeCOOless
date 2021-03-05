@@ -313,7 +313,7 @@ class PostResource(RESTResource):
                             tic = time.time()
 
                             # TODO:
-                            final_shopping_list = get_final_output(search_space, output, api_method, rounding)
+                            final_shopping_list = get_final_output(db, search_space, output, api_method, rounding, location)
                             # Store time: Storing human-readable output
                             timer["Storing human-readable output"] = time.time() - tic
 
