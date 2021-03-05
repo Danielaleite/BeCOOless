@@ -159,9 +159,10 @@ def get_final_output(db, search_space, output, flag,rounding, location):
                         ]
                     })
                     item_db = [c for c in cursor]
+                    # print(f'Item_db:{item_db}')
                     final_dict[item] = {"amount": output["amount"][i][j],
-                                        "price": output["amount"][i][j] * item_db["Price"],
-                                        "carbon": output["amount"][i][j] * item_db["CO2"]}
+                                        "price": round(output["amount"][i][j] * item_db[0]["Price"],2),
+                                        "carbon": round(output["amount"][i][j] * item_db[0]["CO2"],2)}
         final_dict["price"] = round(output["price"], int(rounding))
         final_dict["carbon"] = round(output["carbon"], int(rounding))
         return final_dict
