@@ -12,7 +12,7 @@ import { ItemService } from "../provider/item.service";
           
       <div class="col-2">
         <h4>Normal shopping</h4>
-        <span class="comparison-price">{{ optimalPrice.price }} $</span>
+        <span class="comparison-price">{{ optimalPrice.price }} €</span>
         <div class="comparison-carbon-wrapper">
           <div class="comparison-title">Amount of CO2</div>
           <div class="comparison-carbon">{{ optimalPrice.carbon }} kg</div>
@@ -21,7 +21,7 @@ import { ItemService } from "../provider/item.service";
 
       <div class="col-2">
         <h4>COOLess shopping</h4>
-        <span class="comparison-price green green-border">{{ optimalCO2.price }} $</span>
+        <span class="comparison-price green green-border">{{ optimalCO2.price }} €</span>
         <div class="comparison-carbon-wrapper green-border">
           <div class="comparison-title">Amount of CO2</div>
           <div class="comparison-carbon green">{{ optimalCO2.carbon }} kg</div>
@@ -35,7 +35,7 @@ import { ItemService } from "../provider/item.service";
         thumbLabel  
         [displayWith]="formatLabel"
         min="1"
-        max="15" (change)="setThreshold($event)" [value]="default_threshold"></mat-slider>
+        max="100" (change)="setThreshold($event)" [value]="default_threshold"></mat-slider>
 
 
       <div class="btn" (click)="route()">Get List</div>
@@ -157,16 +157,25 @@ export class CompareComponent {
 
       this.optimalCO2 = optCO2
 
+      Globals.optPrice = optCO2.price
+      Globals.optCarbon = optCO2.carbon
+
+      console.log(optCO2)
+
       let array = Object.keys(this.optimalCO2)
+
       array.splice(array.indexOf('price'), 1)
       array.splice(array.indexOf('carbon'), 1)
 
       Globals.optShoppingList = []
       
       array.forEach((a, i) => {
+
         Globals.optShoppingList.push({
           name: a,
-          amount: optCO2[a],
+          amount: optCO2[a]['amount'],
+          carbon: optCO2[a]['carbon'],
+          price: optCO2[a]['price']
         })
       })
     })

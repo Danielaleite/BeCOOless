@@ -13,4 +13,6 @@ export class Globals {
 
     static optShoppingList: ShoppingItem[]
 
+    static optPrice:number = 0
+    static optCarbon:number = 0
 }

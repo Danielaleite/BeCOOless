@@ -12,20 +12,46 @@ import { ShoppingItem } from "./shopping-item";
 
   <div id="buying-list-wrapper">
 
-  <ul>
+  <ul *ngIf="opt && normal">
+
+    <li>
+      <div class="item-amount">Item</div>
+      <div class="item-amount">Quantity</div>
+      <div class="item-amount">Carbon (Kg)</div>
+      <div class="item-amount">Price (€)</div>
+    </li>
+
     <li *ngFor="let item of optList" (click)="toggleOpacity($event)">
       
-      <div class="item-amount">{{item.name}}</div>
-        
-      <div>
-        <img src="./assets/images/empty-image.jpg" />
-      </div>
-
+      <div class="item-amount">{{titleCase(item.name)}}</div>
       <div class="item-amount">{{item.amount}}</div>
+      <div class="item-amount">{{item.carbon}}</div>
+      <div class="item-amount">{{item.price}}</div>
 
+    </li>
+
+    
+    <li>
+      <div class="item-amount"></div>
+      <div class="item-amount"></div>
+      <div class="item-amount">{{fullCarbon}}</div>
+      <div class="item-amount">{{fullPrice}}</div>
     </li>
   </ul>
 
+</div>
+
+
+
+
+<div *ngIf="opt && normal">
+  <div>
+    You've spent {{moneySpend}}€ more
+  </div>
+
+  <div>
+    But saved {{carbonSaved}} kg of CO<sub>2</sub>
+  </div>
 </div>
 
   `,
@@ -40,13 +66,28 @@ import { ShoppingItem } from "./shopping-item";
   
     #buying-list-wrapper ul li {
       position: relative;
-      display: inline-block;
-      width: 50%;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
       box-sizing:border-box;
       padding: 2.5%;
       text-align:center;
       cursor:pointer;
+      border-bottom: 1px solid #777;
     }
+    #buying-list-wrapper ul li:last-child {
+      cursor:default;
+      border: none;
+    }
+    #buying-list-wrapper ul li:first-child {
+      cursor:default;
+    }
+
+    #buying-list-wrapper ul li div {
+      width: 20%;
+      text-align:left;
+    }
+
     #buying-list-wrapper ul li img {
       width: 100%;
     }
@@ -74,7 +115,10 @@ export class OptimizedListComponent {
 
     public optList: ShoppingItem[]
 
-    constructor(public router: Router) {
+    public normal: { price: number, carbon: number}
+    public opt: any
+
+    constructor(public router: Router, public itemService: ItemService) {
 
       // if(Globals.supermarket == null || Globals.shoppingList.length == 0) {
       //   router.navigateByUrl('/location')
@@ -82,22 +126,73 @@ export class OptimizedListComponent {
       // }
 
         this.optList = Globals.optShoppingList
+
+        this.runAlgorithm()
     }
 
+    public get fullPrice() { return this.opt.price }
+    public get fullCarbon() { return this.opt.carbon }
+    public get moneySpend() { return (this.opt.price - this.normal.price).toFixed(2) }
+    public get carbonSaved() { return (this.normal.carbon - this.opt.carbon).toFixed(2) }
 
     toggleOpacity(e) {
 
-      if(e.target.getAttribute('checked') == 'true') {
+      let ele = e.target.closest('li')
 
-        e.target.style.opacity = '1'
+      if(ele.getAttribute('checked') == 'true') {
 
-        e.target.setAttribute('checked', 'false')
+        ele.style.opacity = '1'
+
+        ele.setAttribute('checked', 'false')
       }
       else {
 
-        e.target.style.opacity = '.3'
+        ele.style.opacity = '.3'
 
-        e.target.setAttribute('checked', 'true')
+        ele.setAttribute('checked', 'true')
       }
     }
+
+    
+  runAlgorithm() {
+    
+    this.itemService.getOptimalPrice().subscribe((optPrice)=> {
+
+      this.normal = optPrice
+    })
+
+    this.itemService.getOptimalCO2().subscribe((optCO2)=> {
+
+      this.opt = optCO2
+
+      Globals.optPrice = optCO2.price
+      Globals.optCarbon = optCO2.carbon
+
+      let array = Object.keys(optCO2)
+
+      array.splice(array.indexOf('price'), 1)
+      array.splice(array.indexOf('carbon'), 1)
+
+      Globals.optShoppingList = []
+      
+      array.forEach((a, i) => {
+
+        Globals.optShoppingList.push({
+          name: a,
+          amount: optCO2[a]['amount'],
+          carbon: optCO2[a]['carbon'],
+          price: optCO2[a]['price']
+        })
+      })
+    })
+  }
+
+
+  titleCase(str) {
+    let splitStr = str.toLowerCase().split(' ');
+    for (let i = 0; i < splitStr.length; i++) {
+        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+    }
+    return splitStr.join(' '); 
+ }
 }

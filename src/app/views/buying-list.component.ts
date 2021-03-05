@@ -36,8 +36,8 @@ import { DB } from '../data';
       <ul>
         <li *ngFor="let item of filteredOptions | async">
             
-          <div>{{ item.name }}</div>
-          <div><img [src]="item.img" /></div>
+          <div (click)="add($event, item)">{{ item.name }}</div>
+          <div (click)="add($event, item)"><img [src]="item.img" /></div>
 
           <div class="item-bar">
             <div class="icon plus" (click)="add($event, item)"><div>+</div></div>
@@ -98,6 +98,7 @@ import { DB } from '../data';
         position: relative;
         display: inline-block;
         width: 50%;
+        max-width: 300px;
         box-sizing:border-box;
         padding: 2.5%;
         text-align:center;
@@ -264,6 +265,13 @@ export class BuyingListComponent implements AfterViewInit {
   remove(e?, item?:ShoppingItem) {
 
     if(item && item.amount > 0) item.amount -= 1
+
+    if(item.amount == 0) {
+      
+      let i = this.buyingList.indexOf(item)
+
+      if(i != -1) this.buyingList.splice(i, 1)
+    }
   } 
 
 }

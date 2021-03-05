@@ -66,10 +66,11 @@ export class LocationComponent {
   public supermarket: string    
   public supermarkets: string[] = [ 
     "Rewe",
-    // "Rewe Südstadt",
-    // "Edeka",
-    // "Kaufland",
-    // "Alnatura"
+    "Lidl",
+    "Aldi",
+    "Edeka",
+    "Kaufland",
+    "Alnatura"
   ]
   
   filteredOptions: Observable<string[]>;
