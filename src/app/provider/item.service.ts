@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
 import { Globals } from "../globals";
 
 
@@ -13,10 +12,7 @@ export class ItemService {
     private priceUrl: string = 'https://becooless.herokuapp.com/api/prototype/2/user_test/optimal_price'
     private co2Url: string = 'https://becooless.herokuapp.com/api/prototype/2/user_test/optimal_co2'
 
-    constructor(public http: HttpClient) {
-
-        
-    }
+    constructor(private http: HttpClient) {}
 
     getOptimalPrice() : Observable<any> {
 

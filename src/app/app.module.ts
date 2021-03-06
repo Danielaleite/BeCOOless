@@ -12,9 +12,6 @@ import { LocationComponent } from './views/location.component'
 import { BuyingListComponent } from './views/buying-list.component'
 import { LoginComponent } from './views/login.component'
 
-
-import { SearchBarComponent } from './templates/search-bar.component';
-
 import {MatSliderModule} from '@angular/material/slider';
 import {MatButtonModule} from '@angular/material/button';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
@@ -42,7 +39,6 @@ const routes: Routes = [
     InitComponent,
     LocationComponent,
     BuyingListComponent,
-    SearchBarComponent,
     CompareComponent,
     LoginComponent,
     OptimizedListComponent

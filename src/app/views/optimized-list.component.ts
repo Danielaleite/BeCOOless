@@ -8,7 +8,7 @@ import { ShoppingItem } from "./shopping-item";
   template: `
   
 
-  <h4>Optimized shopping list</h4>
+  <h4>COOLess Shopping List</h4>
 
   <div id="buying-list-wrapper">
 
@@ -32,7 +32,7 @@ import { ShoppingItem } from "./shopping-item";
 
     
     <li>
-      <div class="item-amount"></div>
+      <div class="item-amount">Total</div>
       <div class="item-amount"></div>
       <div class="item-amount">{{fullCarbon}}</div>
       <div class="item-amount">{{fullPrice}}</div>
@@ -46,11 +46,8 @@ import { ShoppingItem } from "./shopping-item";
 
 <div *ngIf="opt && normal">
   <div>
-    You've spent {{moneySpend}}€ more
-  </div>
-
-  <div>
-    But saved {{carbonSaved}} kg of CO<sub>2</sub>
+    You've spent <strong>{{moneySpend}} €</strong> extra to
+    save <strong style="color: #1FCC79">{{carbonSaved}} kg</strong> of CO<sub>2</sub>
   </div>
 </div>
 
@@ -81,6 +78,7 @@ import { ShoppingItem } from "./shopping-item";
     }
     #buying-list-wrapper ul li:first-child {
       cursor:default;
+      font-size: 1.2rem;
     }
 
     #buying-list-wrapper ul li div {
@@ -120,10 +118,14 @@ export class OptimizedListComponent {
 
     constructor(public router: Router, public itemService: ItemService) {
 
-      // if(Globals.supermarket == null || Globals.shoppingList.length == 0) {
-      //   router.navigateByUrl('/location')
-      //   return
-      // }
+      if(Globals.supermarket == null) {
+        router.navigateByUrl('/location')
+        return
+      }
+      else if(Globals.shoppingList.length == 0) {
+        router.navigateByUrl('/list')
+        return
+      }
 
         this.optList = Globals.optShoppingList
 

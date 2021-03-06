@@ -51,7 +51,7 @@ import { DB } from '../data';
     </div>
 
   
-    <div class="btn bottom-fixed" (click)="route()">Reduce CO2</div>
+    <div class="btn bottom-fixed" (click)="route()">COOLifying List</div>
 
   `,
   styles: [
@@ -173,10 +173,10 @@ export class BuyingListComponent implements AfterViewInit {
 
   constructor(public router: Router, public itemService: ItemService) {
 
-    // if(Globals.supermarket == null) {
-    //   router.navigateByUrl('/location')
-    //   return
-    // }
+    if(Globals.supermarket == null) {
+      router.navigateByUrl('/location')
+      return
+    }
 
     DB.forEach(data => {
       this.items.push({

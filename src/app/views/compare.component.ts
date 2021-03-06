@@ -11,19 +11,19 @@ import { ItemService } from "../provider/item.service";
     <div *ngIf="optimalPrice && optimalCO2" id="comparison-wrapper">
           
       <div class="col-2">
-        <h4>Normal shopping</h4>
+        <h4>Normal Shopping</h4>
         <span class="comparison-price">{{ optimalPrice.price }} €</span>
         <div class="comparison-carbon-wrapper">
-          <div class="comparison-title">Amount of CO2</div>
+          <div class="comparison-title">Amount of CO<sub>2</sub></div>
           <div class="comparison-carbon">{{ optimalPrice.carbon }} kg</div>
         </div>
       </div>
 
       <div class="col-2">
-        <h4>COOLess shopping</h4>
+        <h4>COOLess Shopping</h4>
         <span class="comparison-price green green-border">{{ optimalCO2.price }} €</span>
         <div class="comparison-carbon-wrapper green-border">
-          <div class="comparison-title">Amount of CO2</div>
+          <div class="comparison-title">Amount of CO<sub>2</sub></div>
           <div class="comparison-carbon green">{{ optimalCO2.carbon }} kg</div>
         </div>
       </div>
@@ -38,7 +38,7 @@ import { ItemService } from "../provider/item.service";
         max="100" (change)="setThreshold($event)" [value]="default_threshold"></mat-slider>
 
 
-      <div class="btn" (click)="route()">Get List</div>
+      <div class="btn" (click)="route()">Get COOLess List</div>
 
     </div>
 
@@ -124,10 +124,10 @@ export class CompareComponent {
 
   constructor(public router: Router, public itemService: ItemService) {
     
-    // if(Globals.supermarket == null || Globals.shoppingList.length == 0) {
-    //   router.navigateByUrl('/location')
-    //   return
-    // }
+    if(Globals.supermarket == null || Globals.shoppingList.length == 0) {
+      router.navigateByUrl('/location')
+      return
+    }
 
     Globals.optShoppingList = []
 
